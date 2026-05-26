@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gesty_app/page/calculate/calculatePage.dart';
 import 'package:gesty_app/page/home/home.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gesty_app/page/money_box/money_box.dart';
 import 'package:gesty_app/widget/contain_icon_bar.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -19,7 +18,7 @@ class _BaseAppState extends State<BaseApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(36, 36, 36, 1.0),
+      backgroundColor: Color(0xFF1E1E1E),
       body: Stack(
         children: [
           if(page_name == 'home')

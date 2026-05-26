@@ -26,7 +26,7 @@ class _SignUpState extends State<SignUp> {
         iconTheme: IconThemeData(
           color: Color.fromARGB(255, 255, 255, 255)
         ),
-          backgroundColor:  Color.fromRGBO(30, 30, 30, 1.0),
+          backgroundColor:  Color(0xFF1E1E1E),
       ),
       body: Container(
         width: double.infinity,
@@ -45,13 +45,15 @@ class _SignUpState extends State<SignUp> {
                 fontFamily: 'Jersey15',
               )
             ),
-            const SizedBox(height: 20),
+            
+            const SizedBox(height: 30),
 
             TxtField(label: 'Name',),
             TxtField(label: 'Email',),
             TxtField(label: 'Password',),
-            const SizedBox(height: 20),
-            SimpelBtn(t: "Sign up", w: 220, c: Color.fromRGBO(139, 18, 177, 1.0), action: () => signUpAction(context),), 
+
+            const SizedBox(height: 30),
+            SimpelBtn(t: "Sign up", w: 270, h: 45, c: Color.fromRGBO(139, 18, 177, 1.0), action: () => signUpAction(context),), 
 
           ],
         ),

@@ -18,6 +18,33 @@ class _LoginState extends State<Login> {
       MaterialPageRoute(builder: (_) => BaseApp()),
     );
   }
+
+  void navigate(BuildContext context, Widget page) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 250),
+
+        pageBuilder: (_, __, ___) => page,
+
+        transitionsBuilder: (_, animation, __, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: Curves.ease));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,13 +71,13 @@ class _LoginState extends State<Login> {
                 fontFamily: 'Jersey15',
               )
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
             TxtField(label: 'Email',),
             TxtField(label: 'Password',),
-            const SizedBox(height: 20),
-            SimpelBtn(t: "log in", w: 220, c: Color.fromRGBO(139, 18, 177, 1.0), bold: true,
-              action: () => logInAction(context),), 
+            const SizedBox(height: 30),
+            SimpelBtn(t: "log in", w: 270,h:45, c: Color.fromRGBO(139, 18, 177, 1.0), bold: true,
+              action: () => navigate(context, BaseApp()),), 
 
           ],
         ),

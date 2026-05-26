@@ -8,17 +8,35 @@ import 'package:gesty_app/widget/simpel_btn.dart';
 class FirstPage extends StatelessWidget {
   const FirstPage({super.key});
 
-  void navigation_(BuildContext context, Widget root){
+  void navigate(BuildContext context, Widget page) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => root),
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 250),
+
+        pageBuilder: (_, __, ___) => page,
+
+        transitionsBuilder: (_, animation, __, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: Curves.ease));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(30, 30, 30, 1),
       body: Stack(
         children: [
           Container(
@@ -63,22 +81,12 @@ class FirstPage extends StatelessWidget {
 
                 const SizedBox(height: 50),
 
-                SimpelBtn(t: "Sign up", w: 200, c: Color.fromRGBO(139, 18, 177, 1.0), bold: true,
-                  action: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => SignUp()),
-                    );
-                  }
+                SimpelBtn(t: "Sign up", w: 260, h: 42, c: Color(0xFF8B12B1), bold: true,
+                  action: () => navigate(context, const SignUp())
                 ), 
                 const SizedBox(height: 10),
-                SimpelBtn(t: "Log in", w: 200, c: Color.fromRGBO(30, 30, 30, 1.0), txc:Colors.white, st: Color.fromRGBO(63, 63, 63, 1.0),bold: true, 
-                  action: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => Login()),
-                    );
-                  }
+                SimpelBtn(t: "Log in", w: 260, h: 42, c: Color(0xFF1E1E1E), txc:Colors.white, st: Color.fromRGBO(63, 63, 63, 1.0),bold: true, 
+                  action: () => navigate(context, const Login())
                 )
               ],
             ),

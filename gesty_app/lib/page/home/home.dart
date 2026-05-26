@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
             height: 300,
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color.fromRGBO(30, 30, 30, 1.0),
+              color: Color(0xFF242424),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20)
@@ -90,17 +90,17 @@ class _HomePageState extends State<HomePage> {
                     )
                   ),
               
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
                   Row(
                     mainAxisAlignment: .spaceAround,
                     crossAxisAlignment: .center,
                     children: [
               
-                      SimpelBtn(t: "Deposit", w: 100, h: 35, c: Color(0xFF323232), st: Colors.transparent, txc: Color(0xFF19C285), r: 6, bold: true, sizetx: 10, action: (){}),
+                      SimpelBtn(t: "Deposit", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFF19C285), r: 6, bold: true, sizetx: 10, action: (){}),
                       const SizedBox(width: 10),
-                      SimpelBtn(t: "Withdraw", w: 100, h: 35, c: Color(0xFF323232), st: Colors.transparent, txc: Color(0xFFDF3F31), r: 6, bold: true, sizetx: 10, action: (){}),
+                      SimpelBtn(t: "Withdraw", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color.from(alpha: 1, red: 0.875, green: 0.247, blue: 0.192), r: 6, bold: true, sizetx: 10, action: (){}),
                       const SizedBox(width: 10),
-                      SimpelBtn(t: "Expenses", w: 100, h: 35, c: Color(0xFF323232), st: Colors.transparent, txc: Color(0xFF8B12B1), r: 6, bold: true, sizetx: 10, action: (){}),
+                      SimpelBtn(t: "Expenses", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFF8B12B1), r: 6, bold: true, sizetx: 10, action: (){}),
               
                     ],
                   )
@@ -109,59 +109,96 @@ class _HomePageState extends State<HomePage> {
             )
           ),
           
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 6,
+              ),
 
-          Container(
-            width: double.infinity,
-            height: 300,
-            padding: .symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              // border: Border.all(
-              //   color: Color.fromRGBO(139, 18, 177, 1.0)  
-              // )
-            ),
-            child: Column(
-              crossAxisAlignment: .start,
-              children: [
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
 
-                Text(
-                  'Transactions',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    fontFamily: 'Jersey15',
-                  )
-                ),
-                const SizedBox(height: 10),
+                  const SizedBox(height: 40),
 
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      CategorieSection(title: 'All', selected: true,),
-                      CategorieSection(title: 'Food', selected: false,),
-                      CategorieSection(title: 'Transport', selected: false,),
-                      CategorieSection(title: 'Entertainment', selected: false,),
-                      CategorieSection(title: 'Utilities', selected: false,),
-                    ],
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        CategorieSection(title: 'All', selected: true,),
+                        CategorieSection(title: 'Food', selected: false,),
+                        CategorieSection(title: 'Transport', selected: false,),
+                        CategorieSection(title: 'Entertainment', selected: false,),
+                        CategorieSection(title: 'Utilities', selected: false,),
+                        CategorieSection(title: 'Utilities', selected: false,),
+                        CategorieSection(title: 'Utilities', selected: false,),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-
-                SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    crossAxisAlignment: .center,
-                    children: [
-                      TransactionSection(title: 'Burger', date: 'Today, 19:43 PM', amount: '-50.000 Ar', icon: Icons.fastfood_rounded),
-                      TransactionSection(title: 'Deposit', date: 'Today, 20:30 PM', amount: '+100.000 Ar', icon: HugeIcons.strokeRoundedMoneyAdd01),
-                      TransactionSection(title: 'Repaire PC', date: 'Today, 20:30 PM', amount: '-50.000 Ar'),
-                    ],
+                  const SizedBox(height: -0),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        TransactionSection(
+                          title: 'Burger', 
+                          date: 'Today, 19:43 PM', 
+                          amount: '-50.000 Ar', 
+                          icon: Icons.fastfood_rounded
+                        ),
+                        TransactionSection(
+                          title: 'Deposit', 
+                          date: 'Today, 20:30 PM', 
+                          amount: '+100.000 Ar', 
+                          icon: HugeIcons.strokeRoundedMoneyAdd01
+                        ),
+                        TransactionSection(
+                          title: 'Deposit', 
+                          date: 'Today, 20:30 PM', 
+                          amount: '+100.000 Ar', 
+                          icon: HugeIcons.strokeRoundedMoneyAdd01
+                        ),
+                        TransactionSection(
+                          title: 'Deposit', 
+                          date: 'Today, 20:30 PM', 
+                          amount: '+100.000 Ar', 
+                          icon: HugeIcons.strokeRoundedMoneyAdd01
+                        ),
+                        TransactionSection(
+                          title: 'Deposit', 
+                          date: 'Today, 20:30 PM', 
+                          amount: '+100.000 Ar', 
+                          icon: HugeIcons.strokeRoundedMoneyAdd01
+                        ),
+                        TransactionSection(
+                          title: 'Repaire PC', 
+                          date: 'Today, 20:30 PM', 
+                          amount: '-50.000 Ar'
+                        ),
+                        TransactionSection(
+                          title: 'Repaire PC', 
+                          date: 'Today, 20:30 PM', 
+                          amount: '-50.000 Ar'
+                        ),
+                        TransactionSection(
+                          title: 'Repaire PC', 
+                          date: 'Today, 20:30 PM', 
+                          amount: '-50.000 Ar'
+                        ),
+                        TransactionSection(
+                          title: 'Repaire PC', 
+                          date: 'Today, 20:30 PM', 
+                          amount: '-50.000 Ar'
+                        ),
+                        const SizedBox(height: 70),
+                      ],
+                    ),
                   ),
-                ), 
-              ],
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

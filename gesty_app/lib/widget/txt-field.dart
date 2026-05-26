@@ -12,8 +12,8 @@ class _TxtFieldState extends State<TxtField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 220,
-      height: 40,
+      width: 270,
+      height: 45,
       margin: EdgeInsets.all(10),
       child: TextFormField(
         decoration: InputDecoration(

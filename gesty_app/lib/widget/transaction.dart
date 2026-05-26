@@ -18,10 +18,10 @@ class _TransactionSectionState extends State<TransactionSection> {
     return Container(
       width: MediaQuery.of(context).size.width - 30,
       height: 60,
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      margin: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Color(0xFF1E1E1E),
+        // color: Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(10)
       ),
       child: Row(

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class MyMenuBar extends StatefulWidget {
   final String url;
@@ -26,7 +24,7 @@ class _MenuBarState extends State<MyMenuBar> {
         width: 48,
         height: 44,
         decoration: BoxDecoration(
-          color: widget.selectedPageName == widget.url.split('/').last.split('.').first ? Color(0xFF8B12B1) : Color(0xFF1E1E1E),
+          color: widget.selectedPageName == widget.url.split('/').last.split('.').first ? Color(0xFF8B12B1) : Color(0xFF242424),
           borderRadius: BorderRadius.circular(10),
         ),
         child:  Center(
