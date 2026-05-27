@@ -24,6 +24,7 @@ class _BaseAppState extends State<BaseApp> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
+            // padding: .all(10),
 
             child: (page_name == 'home')
             ? HomePage()

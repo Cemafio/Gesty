@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gesty_app/page/calculate/calculatorGrid.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 
 class CalculatePage extends StatefulWidget {
@@ -20,7 +21,10 @@ class _CalculatePageState extends State<CalculatePage> {
             email: "cesar@gmail.com",
           )
         ),
-        
+        // const SizedBox(height: 200),Contain
+        Expanded(
+          child: CalculatorGrid(),
+        )
       ],
     );
     
