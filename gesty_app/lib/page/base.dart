@@ -54,7 +54,7 @@ class _BaseAppState extends State<BaseApp> {
                 mainAxisAlignment: .center,
                 crossAxisAlignment: .center,
                 children: [
-                  MyMenuBar(url: 'assets/svg/home.svg', selectedPageName: page_name,icon: HugeIcons.strokeRoundedHome09,
+                  MyMenuBar(nameRoute: 'home', selectedPageName: page_name, icon: HugeIcons.strokeRoundedHome09,
                   onTap: (){
                     setState(() {
                       page_name = 'home';
@@ -63,15 +63,15 @@ class _BaseAppState extends State<BaseApp> {
                   
                   const SizedBox(width: 6),
                   
-                  MyMenuBar(url: 'assets/svg/calculate.svg', selectedPageName: page_name, icon: HugeIcons.strokeRoundedAnalytics01, onTap: (){
+                  MyMenuBar(nameRoute: 'money_state', selectedPageName: page_name, icon: HugeIcons.strokeRoundedAnalytics01, onTap: (){
                     setState(() {
-                      page_name = 'calculate';
+                      page_name = 'money_state';
                     });
                   }),
 
                   const SizedBox(width: 6),
 
-                  MyMenuBar(url: 'assets/svg/money_box.svg', selectedPageName: page_name, icon: HugeIcons.strokeRoundedPiggyBank, onTap: (){
+                  MyMenuBar(nameRoute: 'money_box', selectedPageName: page_name, icon: HugeIcons.strokeRoundedPiggyBank, onTap: (){
                     setState(() {
                       page_name = 'money_box';
                     });
@@ -79,9 +79,9 @@ class _BaseAppState extends State<BaseApp> {
 
                   const SizedBox(width: 6),
 
-                  MyMenuBar(url: 'assets/svg/money_state.svg', selectedPageName: page_name, icon: HugeIcons.strokeRoundedCalculate, onTap: (){
+                  MyMenuBar(nameRoute: 'calculate', selectedPageName: page_name, icon: HugeIcons.strokeRoundedCalculate, onTap: (){
                     setState(() {
-                      page_name = 'money_state';
+                      page_name = 'calculate';
                     });
                   }),
                 ],

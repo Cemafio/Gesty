@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MyMenuBar extends StatefulWidget {
-  final String url;
+  final String nameRoute;
   final IconData icon ;
   final void Function() onTap;
   final String selectedPageName;
-  const MyMenuBar({super.key, required this.url, required this.icon, required this.onTap, required this.selectedPageName});
+  const MyMenuBar({super.key, required this.nameRoute, required this.icon, required this.onTap, required this.selectedPageName});
 
   @override
   State<MyMenuBar> createState() => _MenuBarState();
@@ -24,7 +24,7 @@ class _MenuBarState extends State<MyMenuBar> {
         width: 48,
         height: 44,
         decoration: BoxDecoration(
-          color: widget.selectedPageName == widget.url.split('/').last.split('.').first ? Color(0xFF8B12B1) : Color(0xFF242424),
+          color: widget.selectedPageName == widget.nameRoute ? Color(0xFF8B12B1) : Color(0xFF242424),
           borderRadius: BorderRadius.circular(10),
         ),
         child:  Center(
