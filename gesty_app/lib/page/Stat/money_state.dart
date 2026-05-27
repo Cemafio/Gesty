@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 
-class CalculatePage extends StatefulWidget {
-  const CalculatePage({super.key});
+class MoneyStatePage extends StatefulWidget {
+  const MoneyStatePage({super.key});
 
   @override
-  State<CalculatePage> createState() => _CalculatePageState();
+  State<MoneyStatePage> createState() => _MoneyStatePageState();
 }
 
-class _CalculatePageState extends State<CalculatePage> {
-
+class _MoneyStatePageState extends State<MoneyStatePage> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -20,9 +19,7 @@ class _CalculatePageState extends State<CalculatePage> {
             email: "cesar@gmail.com",
           )
         ),
-        
       ],
     );
-    
   }
 }

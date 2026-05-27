@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gesty_app/page/Stat/money_state.dart';
 import 'package:gesty_app/page/calculate/calculatePage.dart';
 import 'package:gesty_app/page/home/home.dart';
 import 'package:gesty_app/page/money_box/money_box.dart';
@@ -21,12 +22,20 @@ class _BaseAppState extends State<BaseApp> {
       backgroundColor: Color(0xFF1E1E1E),
       body: Stack(
         children: [
-          if(page_name == 'home')
-            HomePage(),
-          if(page_name == 'calculate')
-            CalculatePage(),
-          if(page_name == 'money_box')
-            MoneyBox(),
+          Container(
+            width: MediaQuery.of(context).size.width,
+
+            child: (page_name == 'home')
+            ? HomePage()
+            : (page_name == 'calculate')
+              ? CalculatePage()
+              : (page_name == 'money_box')
+                ? MoneyBox()
+                : (page_name == 'money_state')
+                  ? MoneyStatePage()
+                  : null,
+          ),
+          
 
           Positioned(
             bottom: 10,
@@ -52,7 +61,7 @@ class _BaseAppState extends State<BaseApp> {
                     });
                   }),
                   
-                  const SizedBox(width: 5),
+                  const SizedBox(width: 6),
                   
                   MyMenuBar(url: 'assets/svg/calculate.svg', selectedPageName: page_name, icon: HugeIcons.strokeRoundedAnalytics01, onTap: (){
                     setState(() {
@@ -60,11 +69,19 @@ class _BaseAppState extends State<BaseApp> {
                     });
                   }),
 
-                  const SizedBox(width: 5),
+                  const SizedBox(width: 6),
 
                   MyMenuBar(url: 'assets/svg/money_box.svg', selectedPageName: page_name, icon: HugeIcons.strokeRoundedPiggyBank, onTap: (){
                     setState(() {
                       page_name = 'money_box';
+                    });
+                  }),
+
+                  const SizedBox(width: 6),
+
+                  MyMenuBar(url: 'assets/svg/money_state.svg', selectedPageName: page_name, icon: HugeIcons.strokeRoundedCalculate, onTap: (){
+                    setState(() {
+                      page_name = 'money_state';
                     });
                   }),
                 ],

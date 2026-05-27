@@ -13,8 +13,9 @@ class SimpelBtn extends StatefulWidget {
   final double? r;
   final double? sizetx;
   final bool? bold;
+  final Icon? iconBtn;
 
-  const SimpelBtn({super.key, this.w, this.h, this.t, this.c, this.txc, this.st,this.r, this.bold, this.sizetx, required this.action});
+  const SimpelBtn({super.key, this.w, this.h, this.t, this.c, this.txc, this.st,this.r, this.bold, this.sizetx, required this.action, this.iconBtn});
 
   @override
   State<SimpelBtn> createState() => _SimpelBtnState();
@@ -25,26 +26,48 @@ class _SimpelBtnState extends State<SimpelBtn> {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          widget.action();
-        },
-        child: Container(
-          alignment: Alignment.center,
-          width: widget.w ?? 150,
-          height: widget.h ?? 35,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-          decoration: BoxDecoration(
-            color: widget.c ?? Color.fromRGBO(30, 30, 30, 1.0),
-            border: Border.all(color: widget.st ??  Colors.transparent, width: 1),
-            borderRadius: BorderRadius.circular(widget.r ?? 10),
+      borderRadius: BorderRadius.circular(widget.r ?? 10),
+
+      child: Ink(
+        decoration: BoxDecoration(
+          color: widget.c ?? const Color(0xFF1E1E1E),
+
+          border: Border.all(
+            color: widget.st ?? Colors.transparent,
+            width: 1,
           ),
-          child: Text(
-            widget.t ?? "Simpel Button",
-            style: TextStyle(
-              color: widget.txc ?? Color.fromRGBO(30, 30, 30, 1.0),
-              fontWeight: widget.bold ?? false ? FontWeight.bold : FontWeight.normal,
-              fontSize: widget.sizetx ?? 13,
+
+          borderRadius: BorderRadius.circular(widget.r ?? 10),
+        ),
+
+        child: InkWell(
+          borderRadius: BorderRadius.circular(widget.r ?? 10),
+
+          onTap: widget.action,
+
+          child: Container(
+            alignment: Alignment.center,
+            width: widget.w ?? 150,
+            height: widget.h ?? 35,
+
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 7,
+            ),
+
+            child: Text(
+              widget.t ?? "Simple Button",
+
+              style: TextStyle(
+                color: widget.txc ?? Color(0xFF363636),
+
+                fontWeight:
+                    (widget.bold ?? false)
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+
+                fontSize: widget.sizetx ?? 13,
+              ),
             ),
           ),
         ),
