@@ -14,7 +14,7 @@ class _MiniProfilState extends State<MiniProfil> {
   Widget build(BuildContext context) {
     return Container(
         padding: .all(16),
-        height: 120,
+        height: 85,
         width: double.infinity,
         child: Column(
           children: [

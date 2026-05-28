@@ -1,18 +1,28 @@
 
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class TransactionSection extends StatefulWidget {
   final String title;
   final String? date;
   final String amount;
   final IconData? icon;
-  const TransactionSection({super.key, required this.title, this.date, required this.amount, this.icon});
+  final String category;
+  const TransactionSection({super.key, required this.title, this.date, required this.category, required this.amount, this.icon});
 
   @override
   State<TransactionSection> createState() => _TransactionSectionState();
 }
 
 class _TransactionSectionState extends State<TransactionSection> {
+  final Map<String,IconData> type_icons = {
+    "Food": HugeIcons.strokeRoundedSpaghetti,
+    "Credit": HugeIcons.strokeRoundedWifiSquare,
+    "Depo": HugeIcons.strokeRoundedMoneyAdd02,
+    "Transport": HugeIcons.strokeRoundedBus03,
+    "Fix": HugeIcons.strokeRoundedConfiguration02,
+    "Juice": HugeIcons.strokeRoundedBubbleTea02,
+  };
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,8 +41,14 @@ class _TransactionSectionState extends State<TransactionSection> {
           Row(
             children: [
               const SizedBox(width: 5),
-              Icon(widget.icon ?? Icons.category, color: Colors.white, size: 20,),
+              Icon(
+                type_icons.containsKey(widget.category)? type_icons[widget.category]: Icons.category, 
+                color: Colors.white, 
+                size: 20,
+              ),
+
               const SizedBox(width: 20),
+             
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,

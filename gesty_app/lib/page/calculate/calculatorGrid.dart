@@ -14,12 +14,11 @@ class _CalculatorGridState extends State<CalculatorGrid> {
   String result = "0";
 
   final List<String> buttons = [
-
     'C', '⌫', '%', '÷',
     '7', '8', '9', '×',
     '4', '5', '6', '-',
-    '1', '2', '3', '+',
-    '0', '.', '='
+    '1', '2', '3', '+', 
+    '0', '000', '.', '='
   ];
 
   bool isOperator(String text) {
@@ -101,7 +100,6 @@ class _CalculatorGridState extends State<CalculatorGrid> {
     return Column(
       children: [
 
-        // SCREEN
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(20),
@@ -146,7 +144,6 @@ class _CalculatorGridState extends State<CalculatorGrid> {
 
         const SizedBox(height: 20),
 
-        // GRID
         Expanded(
           child: GridView.builder(
             padding: .all(10),

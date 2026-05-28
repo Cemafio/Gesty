@@ -1,20 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gesty_app/models/category_model.dart';
+import 'package:gesty_app/models/transaction_model.dart';
+import 'package:gesty_app/providers/amount_provider.dart';
+import 'package:gesty_app/providers/categories_provider.dart';
+import 'package:gesty_app/providers/transaction_provider.dart';
 import 'package:gesty_app/widget/categorie.dart';
+import 'package:gesty_app/widget/mini_profil.dart';
 import 'package:gesty_app/widget/simpel_btn.dart';
 import 'package:gesty_app/widget/transaction.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final amount = ref.watch(amountProvider);
+    final transactions = ref.watch(transactionsProvider);
+    final categories = ref.watch(categoriesProvider);
+    final categorieSelected = ref.watch(categorieSelectedProvider);
 
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
+    void depositAction() {
+      ref.read(amountProvider.notifier).state += 50000;
+    }
+
+    void withdrawAction() {
+      ref.read(amountProvider.notifier).state -= 50000;
+    }
+
+    void changeCategorySelect(String t){
+
+      ref.read(categoriesProvider.notifier).state =
+          ref.read(categoriesProvider)
+          .map((c) {
+
+            return CategoryModel(
+              title: c.title,
+              selected: c.title == t,
+            );
+
+          }).toList();
+    } 
+
+    return SizedBox(
       child: Column(
         crossAxisAlignment: .start,
         children: [
@@ -33,55 +61,12 @@ class _HomePageState extends State<HomePage> {
             child: SafeArea(
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.white,
-                        child: Text(
-                          "C",
-                          style: TextStyle(
-                            color: Color(0xFF1E1E1E),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Jersey15',
-                          )
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      SizedBox(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Cesar",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                fontFamily: 'Jersey15',
-                              )
-                            ),
-                            Text(
-                              "cesar@gmail.com",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.normal,
-                              )
-                            )
-                          ],
-                        )
+                  MiniProfil(name: 'Cesar',email: 'cesar@gmail.com',),
               
-                      )
-                    ],
-                  ),
-              
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 5),
               
                   Text(
-                    "1.600.000 Ar",
+                    "$amount Ar",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 50,
@@ -90,15 +75,15 @@ class _HomePageState extends State<HomePage> {
                     )
                   ),
               
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 15),
                   Row(
-                    mainAxisAlignment: .spaceAround,
+                    mainAxisAlignment: .center,
                     crossAxisAlignment: .center,
                     children: [
               
-                      SimpelBtn(t: "Deposit", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFF19C285), r: 6, bold: true, sizetx: 10, action: (){}),
+                      SimpelBtn(t: "Deposit", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFF19C285), r: 6, bold: true, sizetx: 10, action: () => depositAction()),
                       const SizedBox(width: 10),
-                      SimpelBtn(t: "Withdraw", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color.from(alpha: 1, red: 0.875, green: 0.247, blue: 0.192), r: 6, bold: true, sizetx: 10, action: (){}),
+                      SimpelBtn(t: "Withdraw", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFFDF3F31), r: 6, bold: true, sizetx: 10, action: () => withdrawAction()),
                       const SizedBox(width: 10),
                       SimpelBtn(t: "Expenses", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFF8B12B1), r: 6, bold: true, sizetx: 10, action: (){}),
               
@@ -123,76 +108,42 @@ class _HomePageState extends State<HomePage> {
 
                   const SizedBox(height: 40),
 
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        CategorieSection(title: 'All', selected: true,),
-                        CategorieSection(title: 'Food', selected: false,),
-                        CategorieSection(title: 'Transport', selected: false,),
-                        CategorieSection(title: 'Entertainment', selected: false,),
-                        CategorieSection(title: 'Utilities', selected: false,),
-                        CategorieSection(title: 'Utilities', selected: false,),
-                        CategorieSection(title: 'Utilities', selected: false,),
-                      ],
+                  SizedBox(
+                    height: 25,
+
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: categories.length,
+
+                      itemBuilder: (context, index) {
+
+                        final category = categories[index];
+
+                        return CategorieSection(
+                          title: category.title,
+                          selected: category.selected,
+                          selectedAction: () => changeCategorySelect(category.title),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: -0),
                   Expanded(
-                    child: ListView(
-                      children: [
-                        TransactionSection(
-                          title: 'Burger', 
-                          date: 'Today, 19:43 PM', 
-                          amount: '-50.000 Ar', 
-                          icon: Icons.fastfood_rounded
-                        ),
-                        TransactionSection(
-                          title: 'Deposit', 
-                          date: 'Today, 20:30 PM', 
-                          amount: '+100.000 Ar', 
-                          icon: HugeIcons.strokeRoundedMoneyAdd01
-                        ),
-                        TransactionSection(
-                          title: 'Deposit', 
-                          date: 'Today, 20:30 PM', 
-                          amount: '+100.000 Ar', 
-                          icon: HugeIcons.strokeRoundedMoneyAdd01
-                        ),
-                        TransactionSection(
-                          title: 'Deposit', 
-                          date: 'Today, 20:30 PM', 
-                          amount: '+100.000 Ar', 
-                          icon: HugeIcons.strokeRoundedMoneyAdd01
-                        ),
-                        TransactionSection(
-                          title: 'Deposit', 
-                          date: 'Today, 20:30 PM', 
-                          amount: '+100.000 Ar', 
-                          icon: HugeIcons.strokeRoundedMoneyAdd01
-                        ),
-                        TransactionSection(
-                          title: 'Repaire PC', 
-                          date: 'Today, 20:30 PM', 
-                          amount: '-50.000 Ar'
-                        ),
-                        TransactionSection(
-                          title: 'Repaire PC', 
-                          date: 'Today, 20:30 PM', 
-                          amount: '-50.000 Ar'
-                        ),
-                        TransactionSection(
-                          title: 'Repaire PC', 
-                          date: 'Today, 20:30 PM', 
-                          amount: '-50.000 Ar'
-                        ),
-                        TransactionSection(
-                          title: 'Repaire PC', 
-                          date: 'Today, 20:30 PM', 
-                          amount: '-50.000 Ar'
-                        ),
-                        const SizedBox(height: 70),
-                      ],
+                    child: ListView.builder(
+                      itemCount: transactions.length,
+
+                      itemBuilder: (context, index) {
+
+                        final transaction = transactions[index];
+
+                        return TransactionSection(
+                          title: transaction.title,
+                          date:  DateFormat('dd MMM, HH:mm').format(transaction.date),
+                          amount: "${transaction.type==TransactionType.expense ? '-' : '+'}${transaction.amount} Ar",
+                          category: transaction.category, 
+                        );
+
+                      },
                     ),
                   ),
                 ],
