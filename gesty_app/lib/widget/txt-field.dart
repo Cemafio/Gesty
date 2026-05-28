@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TxtField extends StatefulWidget {
-  final String? label;
-  const TxtField({super.key, this.label});
+  final String label;
+  final Function actionSaved;
+  const TxtField({super.key, required this.label, required this.actionSaved});
 
   @override
   State<TxtField> createState() => _TxtFieldState();
@@ -13,11 +14,25 @@ class _TxtFieldState extends State<TxtField> {
   Widget build(BuildContext context) {
     return Container(
       width: 270,
-      height: 45,
-      margin: EdgeInsets.all(10),
+      height: 70,
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: TextFormField(
+        style: TextStyle(
+          color: Colors.white
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "Enter your ${widget.label.toLowerCase()}";
+          }
+
+          return null;
+        },
+        onSaved: (newValue) => newValue != '' 
+          ? widget.actionSaved(newValue, widget.label)
+          : null,
+
         decoration: InputDecoration(
-          labelText: widget.label ?? "Label",
+          labelText: widget.label,
           labelStyle: TextStyle(
             color: Colors.white,
             fontSize: 11,

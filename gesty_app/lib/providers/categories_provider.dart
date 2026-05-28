@@ -10,4 +10,3 @@ final categoriesProvider = StateProvider<List<CategoryModel>>((ref) {
   ];
 });
 
-final categorieSelectedProvider = StateProvider((ref) => 'All');

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gesty_app/models/category_model.dart';
 import 'package:gesty_app/models/transaction_model.dart';
 import 'package:gesty_app/providers/amount_provider.dart';
+import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/providers/categories_provider.dart';
 import 'package:gesty_app/providers/transaction_provider.dart';
 import 'package:gesty_app/widget/categorie.dart';
@@ -18,7 +19,7 @@ class HomePage extends ConsumerWidget {
     final amount = ref.watch(amountProvider);
     final transactions = ref.watch(transactionsProvider);
     final categories = ref.watch(categoriesProvider);
-    final categorieSelected = ref.watch(categorieSelectedProvider);
+    final colorApp = ref.watch(color_theme);
 
     void depositAction() {
       ref.read(amountProvider.notifier).state += 50000;
@@ -51,7 +52,7 @@ class HomePage extends ConsumerWidget {
             height: 300,
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xFF242424),
+              color: colorApp[2],
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20)
@@ -81,11 +82,11 @@ class HomePage extends ConsumerWidget {
                     crossAxisAlignment: .center,
                     children: [
               
-                      SimpelBtn(t: "Deposit", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFF19C285), r: 6, bold: true, sizetx: 10, action: () => depositAction()),
+                      SimpelBtn(t: "Deposit", w: 100, h: 35, c: colorApp[1], st: Colors.transparent, txc: colorApp[3], r: 6, bold: true, sizetx: 10, action: () => depositAction()),
                       const SizedBox(width: 10),
-                      SimpelBtn(t: "Withdraw", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFFDF3F31), r: 6, bold: true, sizetx: 10, action: () => withdrawAction()),
+                      SimpelBtn(t: "Withdraw", w: 100, h: 35, c: colorApp[1], st: Colors.transparent, txc: colorApp.last, r: 6, bold: true, sizetx: 10, action: () => withdrawAction()),
                       const SizedBox(width: 10),
-                      SimpelBtn(t: "Expenses", w: 100, h: 35, c: Color(0xFF1E1E1E), st: Colors.transparent, txc: Color(0xFF8B12B1), r: 6, bold: true, sizetx: 10, action: (){}),
+                      SimpelBtn(t: "Expenses", w: 100, h: 35, c: colorApp[1], st: Colors.transparent, txc: colorApp.first, r: 6, bold: true, sizetx: 10, action: (){}),
               
                     ],
                   )
