@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gesty_app/page/base.dart';
+import 'package:gesty_app/page/log-in.dart';
 import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/service/service.dart';
+import 'package:gesty_app/utils/navigation.dart';
 import 'package:gesty_app/widget/icon-gesty.dart';
 import 'package:gesty_app/widget/simpel_btn.dart';
 import 'package:gesty_app/widget/txt-field.dart';
@@ -19,28 +20,39 @@ class _SignUpState extends ConsumerState<SignUp> {
   String _name = '';
   String _email = '';
   String _pass = '';
+  bool _isLoading = false;
 
-  Future<void> signUpAction(BuildContext context, String url)async {
-
+  Future<void> signUpAction(BuildContext context, String url) async {
+    setState(() {
+      _isLoading = true;
+    });
+    print("$_isLoading");
+    
     formKey.currentState!.validate();
     formKey.currentState!.save();
 
     if(_name.isNotEmpty && _email.isNotEmpty && _pass.isNotEmpty){
-      // final _baseUrl = ref.watch(baseUrl);
-      final response = await register(url, _name, _email, _pass);
-
-      if(response == 'Success'){  
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BaseApp()),
-        );
+      try {
+        final response = await register(url, _name, _email, _pass);
+        if(response == 'Success'){  
+          AppNavigator.navigate(context, Login());
+        }
+      }catch (e) {
+        throw Exception("Api error: $e");        
+      }finally{
+        setState(() {
+          _isLoading = false;
+        });
+        print("$_isLoading");
       }
+
+
     }
 
   }
 
   void _savedValue(String newValue, String label) {
-    print("$newValue, $label");
+    // print("$newValue, $label");
     setState(() {
       switch(label){
         case('Name'):
@@ -102,7 +114,7 @@ class _SignUpState extends ConsumerState<SignUp> {
             ),
 
             const SizedBox(height: 30),
-            SimpelBtn(t: "Sign up", w: 270, h: 45, c: Color.fromRGBO(139, 18, 177, 1.0), action: () => signUpAction(context, _baseUrl),), 
+            SimpelBtn(t: "Sign up", w: 270, h: 45, c: Color.fromRGBO(139, 18, 177, 1.0), isLoaded: _isLoading,action: () => signUpAction(context, _baseUrl),), 
 
           ],
         ),

@@ -1,26 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gesty_app/page/base.dart';
+import 'package:gesty_app/providers/app_provider.dart';
+import 'package:gesty_app/service/service.dart';
 import 'package:gesty_app/utils/navigation.dart';
 import 'package:gesty_app/widget/icon-gesty.dart';
 import 'package:gesty_app/widget/simpel_btn.dart';
 import 'package:gesty_app/widget/txt-field.dart';
 
-class Login extends StatefulWidget {
+class Login extends ConsumerStatefulWidget {
   const Login({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  ConsumerState<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends ConsumerState<Login> {
+  final _keyform = GlobalKey<FormState>();
   String _email = '';
   String _pass = '';
+  bool _isLoading = false;
 
-  void logInAction(BuildContext context){
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => BaseApp()),
-    );
+  void logInAction(BuildContext context, String url) async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    _keyform.currentState!.validate();
+    _keyform.currentState!.save();
+
+    if(_email.isNotEmpty && _pass.isNotEmpty){
+      try {
+        final response = await login (url, _email, _pass);
+        if(response['success'] == true){  
+          ref.read(accessTokenProvider.notifier).state = response['token'];
+          print("tokenProvider = ${ref.watch(accessTokenProvider)}");
+          AppNavigator.navigate(context, BaseApp());
+        }
+      }catch (e) {
+        throw Exception("Api error: $e");        
+      }finally{
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   void _savedValue(String newValue, String label) {
@@ -40,34 +64,10 @@ class _LoginState extends State<Login> {
     });
   }
 
-  // void navigate(BuildContext context, Widget page) {
-  //   Navigator.push(
-  //     context,
-  //     PageRouteBuilder(
-  //       transitionDuration: const Duration(milliseconds: 250),
-
-  //       pageBuilder: (_, __, ___) => page,
-
-  //       transitionsBuilder: (_, animation, __, child) {
-  //         const begin = Offset(1.0, 0.0);
-  //         const end = Offset.zero;
-
-  //         final tween = Tween(
-  //           begin: begin,
-  //           end: end,
-  //         ).chain(CurveTween(curve: Curves.ease));
-
-  //         return SlideTransition(
-  //           position: animation.drive(tween),
-  //           child: child,
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
+    final _baseUrl = ref.watch(baseUrl);
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
@@ -94,11 +94,18 @@ class _LoginState extends State<Login> {
             ),
             const SizedBox(height: 30),
 
-            TxtField(label: 'Email',actionSaved: _savedValue,),
-            TxtField(label: 'Password',actionSaved: _savedValue),
+            Form(
+              key: _keyform,
+              child: Column(
+                children:[
+                  TxtField(label: 'Email',actionSaved: _savedValue,),
+                  TxtField(label: 'Password',actionSaved: _savedValue),
+                ]
+              ),
+            ),
             const SizedBox(height: 30),
-            SimpelBtn(t: "log in", w: 270,h:45, c: Color.fromRGBO(139, 18, 177, 1.0), bold: true,
-              action: () => AppNavigator.navigate(context, const BaseApp()),), 
+            SimpelBtn(t: "log in", w: 270,h:45, c: Color.fromRGBO(139, 18, 177, 1.0), bold: true,isLoaded: _isLoading,
+              action: () => logInAction(context, _baseUrl),), 
 
           ],
         ),

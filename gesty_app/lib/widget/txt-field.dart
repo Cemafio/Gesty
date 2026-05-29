@@ -17,6 +17,12 @@ class _TxtFieldState extends State<TxtField> {
       height: 70,
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: TextFormField(
+        keyboardType:(widget.label == 'Email') 
+          ? TextInputType.emailAddress
+          : TextInputType.text,
+
+        obscureText: widget.label == 'Password',
+        
         style: TextStyle(
           color: Colors.white
         ),

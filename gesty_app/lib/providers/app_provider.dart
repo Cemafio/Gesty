@@ -13,3 +13,4 @@ final color_theme = StateProvider<List<dynamic>>((ref){
 });
 
 final baseUrl = StateProvider<String>((ref) => 'http://10.76.52.28:3000');
+final accessTokenProvider = StateProvider<String>((ref) => '');

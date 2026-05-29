@@ -14,14 +14,17 @@ class SimpelBtn extends StatefulWidget {
   final double? sizetx;
   final bool? bold;
   final Icon? iconBtn;
+  final bool? isLoaded;
 
-  const SimpelBtn({super.key, this.w, this.h, this.t, this.c, this.txc, this.st,this.r, this.bold, this.sizetx, required this.action, this.iconBtn});
+  const SimpelBtn({super.key, this.w, this.h, this.t, this.c, this.txc, this.st,this.r, this.bold, this.sizetx, required this.action, this.isLoaded, this.iconBtn});
 
   @override
   State<SimpelBtn> createState() => _SimpelBtnState();
 }
 
 class _SimpelBtnState extends State<SimpelBtn> {
+  bool? get _load => widget.isLoaded;
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -55,20 +58,33 @@ class _SimpelBtnState extends State<SimpelBtn> {
               vertical: 7,
             ),
 
-            child: Text(
-              widget.t ?? "Simple Button",
+            child: 
+            (_load == false || _load == null)
+              ?Text(
+                widget.t ?? "Simple Button $_load",
 
-              style: TextStyle(
-                color: widget.txc ?? Color(0xFF363636),
+                style: TextStyle(
+                  color: widget.txc ?? Color(0xFF363636),
 
-                fontWeight:
-                    (widget.bold ?? false)
-                        ? FontWeight.bold
-                        : FontWeight.normal,
+                  fontWeight:
+                      (widget.bold ?? false)
+                          ? FontWeight.bold
+                          : FontWeight.normal,
 
-                fontSize: widget.sizetx ?? 13,
-              ),
-            ),
+                  fontSize: widget.sizetx ?? 13,
+                ),
+              )
+              :
+              SizedBox(
+                height: 20,
+                width: 20,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
+              )
           ),
         ),
       ),

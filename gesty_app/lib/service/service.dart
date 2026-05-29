@@ -23,3 +23,27 @@ Future<String> register(String baseUrl, String name, String email, String pass) 
     return "Failed";
   }
 }
+
+Future<Map<String, dynamic>> login(String baseUrl, String email, String pass) async {
+  final url = Uri.parse('$baseUrl/auth/login');
+
+  final request = await http.post(
+    url,
+    body: {
+      'email': email,
+      'password': pass
+    },
+  );
+
+  final data = jsonDecode(request.body);
+  if(request.statusCode == 200 || request.statusCode == 201){
+    print("Login Success, token: ${data['accessToken']}");
+    return {
+      "success": true,
+      "token": data['accessToken']
+    };
+  }else{
+    print("Login Error , data: $data");
+    return {"success": false};
+  }
+}
