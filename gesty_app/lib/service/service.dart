@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gesty_app/models/transaction_model.dart';
 import 'package:http/http.dart' as http;
 
 // AUTHENTIFICATION
@@ -63,15 +64,43 @@ Future<Map<String, dynamic>> getWallet(String baseUrl, String typeWallet, String
   final data = jsonDecode(request.body);
   if(request.statusCode == 200 || request.statusCode == 201){
     print("Get wallet amount Success, data: ${data}");
-    return {
-      "success": true,
-      "data": data
-    };
+    return data;
   }else{
     print("Login Error , data: $data");
-    return {
-      "success": false, 
-      'mess':data['message']
-    };
+    return data;
+  }
+}
+// TRANSACTIONS
+Future<void> depositServiceTransaction({
+  required int idWallet,
+  required String token,
+  required String baseUrl,
+  required TransactionType type,
+  required double amount,
+  required String category,
+}) async {
+
+  final url = Uri.parse('$baseUrl/transactions/create');
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode({
+      'amount': amount,
+      'type': type,
+      'description': 'Deposit',
+      'walletId': idWallet,
+      'categoryId': category,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print('Transaction created');
+  } else {
+    throw Exception(
+      'Erreur update : ${response.body}',
+    );
   }
 }

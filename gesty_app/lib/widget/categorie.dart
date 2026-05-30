@@ -25,7 +25,11 @@ class _CategorieSectionState extends ConsumerState<CategorieSection> {
         padding: .symmetric(horizontal: 10, vertical: 2),
         margin: .symmetric(horizontal: 5,),
         decoration: BoxDecoration(
-          color: !widget.selected ? colorApp[2] : colorApp.first,
+          color: !widget.selected 
+            ? (widget.title!.contains('0'))
+              ? colorApp[1]
+              : colorApp[2]
+            : colorApp.first,
           borderRadius: BorderRadius.circular(6)
         ),
         child: Text(

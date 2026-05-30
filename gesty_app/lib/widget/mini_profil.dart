@@ -24,7 +24,7 @@ class _MiniProfilState extends State<MiniProfil> {
                   radius: 20,
                   backgroundColor: Colors.white,
                   child: Text(
-                    "C",
+                    widget.name!.split('').first,
                     style: TextStyle(
                       color: Color(0xFF1E1E1E),
                       fontSize: 20,

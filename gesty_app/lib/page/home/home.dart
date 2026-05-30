@@ -2,31 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gesty_app/models/category_model.dart';
 import 'package:gesty_app/models/transaction_model.dart';
-import 'package:gesty_app/providers/amount_provider.dart';
+import 'package:gesty_app/providers/wallet_provider.dart';
 import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/providers/categories_provider.dart';
 import 'package:gesty_app/providers/transaction_provider.dart';
+import 'package:gesty_app/utils/extensionString.dart';
 import 'package:gesty_app/widget/categorie.dart';
+import 'package:gesty_app/widget/icon-btn.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 import 'package:gesty_app/widget/simpel_btn.dart';
 import 'package:gesty_app/widget/transaction.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   Widget build(BuildContext context, WidgetRef ref) {
-    final amount = ref.watch(amountProvider);
+    final walletAsync = ref.watch(walletProvider);
+
     final transactions = ref.watch(transactionsProvider);
     final categories = ref.watch(categoriesProvider);
     final colorApp = ref.watch(color_theme);
 
     void depositAction() {
-      ref.read(amountProvider.notifier).state += 50000;
+      // ref.read(amountProvider.notifier).state += 50000;
     }
 
     void withdrawAction() {
-      ref.read(amountProvider.notifier).state -= 50000;
+      // ref.read(amountProvider.notifier).state -= 50000;
     }
 
     void changeCategorySelect(String t){
@@ -64,32 +68,36 @@ class HomePage extends ConsumerWidget {
             child: SafeArea(
               child: Column(
                 children: [
-                  MiniProfil(name: 'Cesar',email: 'cesar@gmail.com',),
+                  MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,),
               
                   const SizedBox(height: 5),
-              
-                  Text(
-                    "$amount Ar",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 50,
-                      fontWeight: FontWeight.normal,
-                      fontFamily: 'Jersey15',
-                    )
+
+                  walletAsync.when(
+                    data: (wallet) => Text(
+                      "${wallet['balance']} Ar",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 50,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Jersey15',
+                      )
+                    ),
+                    loading: () => CircularProgressIndicator(),
+                    error: (e, _) => Text(e.toString()),
                   ),
+
+                  
               
                   const SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: .center,
                     crossAxisAlignment: .center,
                     children: [
-              
-                      SimpelBtn(t: "Deposit", w: 100, h: 35, c: colorApp[1], st: Colors.transparent, txc: colorApp[3], r: 6, bold: true, sizetx: 10, action: () => depositAction()),
+                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedAdd02, color: colorApp[3],), c: colorApp[1], r: 20, sizeIcon: 15, action: () => depositAction()),
                       const SizedBox(width: 10),
-                      SimpelBtn(t: "Withdraw", w: 100, h: 35, c: colorApp[1], st: Colors.transparent, txc: colorApp.last, r: 6, bold: true, sizetx: 10, action: () => withdrawAction()),
+                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedRemove02, color: colorApp.last,), c: colorApp[1], r: 20, sizeIcon: 15, action: () => depositAction()),
                       const SizedBox(width: 10),
-                      SimpelBtn(t: "Expenses", w: 100, h: 35, c: colorApp[1], st: Colors.transparent, txc: colorApp.first, r: 6, bold: true, sizetx: 10, action: (){}),
-              
+                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedAddToList, color: colorApp.first,), c: colorApp[1], r: 20, sizeIcon: 15, action: () => depositAction()),
                     ],
                   )
                 ],
