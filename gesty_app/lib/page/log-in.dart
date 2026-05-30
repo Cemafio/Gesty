@@ -39,7 +39,7 @@ class _LoginState extends ConsumerState<Login> {
 
           AppNavigator.navigate(context, BaseApp());
         }
-        if(response['mess'].isNotEmpty){
+        if(response['mess'] != null){
           print('Error message : ${response['mess']}');
           setState(() {
             _errorMess = response['mess'];
