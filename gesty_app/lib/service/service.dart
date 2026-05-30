@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+// AUTHENTIFICATION
 
 Future<Map<String, dynamic>> register(String baseUrl, String name, String email, String pass) async {
   final url = Uri.parse('$baseUrl/auth/register');
@@ -40,10 +41,36 @@ Future<Map<String, dynamic>> login(String baseUrl, String email, String pass) as
     print("Login Success, token: ${data['accessToken']}");
     return {
       "success": true,
-      "token": data['accessToken']
+      "token": data['accessToken'],
+      "user_data": data['user']
     };
   }else{
     print("Login Error , data: $data");
     return {"success": false, 'mess':data['message']};
+  }
+}
+// WALLET
+Future<Map<String, dynamic>> getWallet(String baseUrl, int idUser,) async {
+  final url = Uri.parse('$baseUrl/wallet/login');
+
+  final request = await http.get(
+    url,
+    headers: {
+      
+    }
+  );
+
+  final data = jsonDecode(request.body);
+  if(request.statusCode == 200 || request.statusCode == 201){
+    print("Get wallet amount Success, data: ${data}");
+    return {
+      "success": true,
+    };
+  }else{
+    print("Login Error , data: $data");
+    return {
+      "success": false, 
+      'mess':data['message']
+    };
   }
 }

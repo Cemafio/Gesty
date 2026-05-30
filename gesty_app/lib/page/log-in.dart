@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gesty_app/models/user_model.dart';
 import 'package:gesty_app/page/base.dart';
 import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/service/service.dart';
@@ -21,6 +22,7 @@ class _LoginState extends ConsumerState<Login> {
   String _pass = '';
   bool _isLoading = false;
   String _errorMess = '';
+  bool _isPassObscured = true;
 
   void logInAction(BuildContext context, String url) async {
     setState(() {
@@ -35,6 +37,8 @@ class _LoginState extends ConsumerState<Login> {
         final response = await login (url, _email, _pass);
         if(response['success'] == true){  
           ref.read(accessTokenProvider.notifier).state = response['token'];
+          final dataUser = response['user_data'];
+          ref.read(user_data.notifier).state = UserModel(id: dataUser['id'], email: dataUser['email'], name: dataUser['name']);
           _keyform.currentState!.reset();
 
           AppNavigator.navigate(context, BaseApp());
@@ -74,6 +78,12 @@ class _LoginState extends ConsumerState<Login> {
     });
   }
 
+  void changeObscuredText(){
+    print('click');
+    setState(() {
+      _isPassObscured = !_isPassObscured;
+    });
+  } 
   @override
   Widget build(BuildContext context) {
     final _baseUrl = ref.watch(baseUrl);
@@ -110,7 +120,7 @@ class _LoginState extends ConsumerState<Login> {
               child: Column(
                 children:[
                   TxtField(label: 'Email',actionSaved: _savedValue,),
-                  TxtField(label: 'Password',actionSaved: _savedValue),
+                  TxtField(label: 'Password',actionSaved: _savedValue,obscuredText: _isPassObscured, changeObscureText: () => changeObscuredText()),
                 ]
               ),
             ),

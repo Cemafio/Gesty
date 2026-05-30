@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gesty_app/models/user_model.dart';
 
 final color_theme = StateProvider<List<dynamic>>((ref){
   return [
@@ -14,3 +15,5 @@ final color_theme = StateProvider<List<dynamic>>((ref){
 
 final baseUrl = StateProvider<String>((ref) => 'http://10.76.52.28:3000');
 final accessTokenProvider = StateProvider<String>((ref) => '');
+
+final user_data = StateProvider<UserModel?>((ref) => null);
