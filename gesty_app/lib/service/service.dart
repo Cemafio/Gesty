@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 
-Future<String> register(String baseUrl, String name, String email, String pass) async {
+Future<Map<String, dynamic>> register(String baseUrl, String name, String email, String pass) async {
   final url = Uri.parse('$baseUrl/auth/register');
 
   final request = await http.post(
@@ -17,10 +17,10 @@ Future<String> register(String baseUrl, String name, String email, String pass) 
   final data = jsonDecode(request.body);
   if(request.statusCode == 201){
     print("Register Success, data: $data");
-    return "Success";
+    return {"success":true};
   }else{
     print("Register Error , data: $data");
-    return "Failed";
+    return {"success": false, 'mess':data['message']};
   }
 }
 
@@ -44,6 +44,6 @@ Future<Map<String, dynamic>> login(String baseUrl, String email, String pass) as
     };
   }else{
     print("Login Error , data: $data");
-    return {"success": false};
+    return {"success": false, 'mess':data['message']};
   }
 }

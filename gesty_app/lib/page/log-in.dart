@@ -20,6 +20,7 @@ class _LoginState extends ConsumerState<Login> {
   String _email = '';
   String _pass = '';
   bool _isLoading = false;
+  String _errorMess = '';
 
   void logInAction(BuildContext context, String url) async {
     setState(() {
@@ -34,11 +35,20 @@ class _LoginState extends ConsumerState<Login> {
         final response = await login (url, _email, _pass);
         if(response['success'] == true){  
           ref.read(accessTokenProvider.notifier).state = response['token'];
-          print("tokenProvider = ${ref.watch(accessTokenProvider)}");
+          _keyform.currentState!.reset();
+
           AppNavigator.navigate(context, BaseApp());
         }
+        if(response['mess'].isNotEmpty){
+          print('Error message : ${response['mess']}');
+          setState(() {
+            _errorMess = response['mess'];
+          });
+        }
+
       }catch (e) {
         throw Exception("Api error: $e");        
+
       }finally{
         setState(() {
           _isLoading = false;
@@ -67,6 +77,7 @@ class _LoginState extends ConsumerState<Login> {
   @override
   Widget build(BuildContext context) {
     final _baseUrl = ref.watch(baseUrl);
+    final colorApp = ref.watch(color_theme);
 
     return Scaffold(
       appBar: AppBar(
@@ -103,7 +114,15 @@ class _LoginState extends ConsumerState<Login> {
                 ]
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
+            Text('$_errorMess',
+            textAlign: .center,
+              style: TextStyle(
+                color: colorApp.last,
+                fontSize: 11,
+                
+              ),),
+            const SizedBox(height: 10),
             SimpelBtn(t: "log in", w: 270,h:45, c: Color.fromRGBO(139, 18, 177, 1.0), bold: true,isLoaded: _isLoading,
               action: () => logInAction(context, _baseUrl),), 
 

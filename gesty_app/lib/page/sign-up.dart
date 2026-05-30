@@ -21,12 +21,12 @@ class _SignUpState extends ConsumerState<SignUp> {
   String _email = '';
   String _pass = '';
   bool _isLoading = false;
+  String _errorMess = '';
 
   Future<void> signUpAction(BuildContext context, String url) async {
     setState(() {
       _isLoading = true;
     });
-    print("$_isLoading");
     
     formKey.currentState!.validate();
     formKey.currentState!.save();
@@ -34,8 +34,19 @@ class _SignUpState extends ConsumerState<SignUp> {
     if(_name.isNotEmpty && _email.isNotEmpty && _pass.isNotEmpty){
       try {
         final response = await register(url, _name, _email, _pass);
-        if(response == 'Success'){  
+        if(response['success']){  
+          formKey.currentState!.reset();
+          setState(() {
+            _errorMess = '';
+          });
+          print('Error message = $_errorMess');
           AppNavigator.navigate(context, Login());
+        }
+
+        if(response['mess'] != null){
+          setState(() {
+            _errorMess = response['mess'];
+          });
         }
       }catch (e) {
         throw Exception("Api error: $e");        
@@ -43,7 +54,6 @@ class _SignUpState extends ConsumerState<SignUp> {
         setState(() {
           _isLoading = false;
         });
-        print("$_isLoading");
       }
 
 
@@ -74,6 +84,7 @@ class _SignUpState extends ConsumerState<SignUp> {
   @override
   Widget build(BuildContext context) {
     final _baseUrl = ref.watch(baseUrl);
+    final colorApp = ref.watch(color_theme);
 
     return Scaffold(
       appBar: AppBar(
@@ -113,7 +124,17 @@ class _SignUpState extends ConsumerState<SignUp> {
               )
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
+            
+            Text('$_errorMess',
+            textAlign: .center,
+              style: TextStyle(
+                color: colorApp.last,
+                fontSize: 11,
+              ),),
+              
+            const SizedBox(height: 10),            
+            
             SimpelBtn(t: "Sign up", w: 270, h: 45, c: Color.fromRGBO(139, 18, 177, 1.0), isLoaded: _isLoading,action: () => signUpAction(context, _baseUrl),), 
 
           ],
