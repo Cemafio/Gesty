@@ -1,23 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gesty_app/page/Stat/money_state.dart';
 import 'package:gesty_app/page/calculate/calculatePage.dart';
 import 'package:gesty_app/page/home/home.dart';
 import 'package:gesty_app/page/money_box/money_box.dart';
+import 'package:gesty_app/providers/amount_provider.dart';
+import 'package:gesty_app/providers/app_provider.dart';
+import 'package:gesty_app/service/service.dart';
 import 'package:gesty_app/widget/contain_icon_bar.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class BaseApp extends StatefulWidget {
+class BaseApp extends ConsumerStatefulWidget {
   const BaseApp({super.key});
 
   @override
-  State<BaseApp> createState() => _BaseAppState();
+  ConsumerState<BaseApp> createState() => _BaseAppState();
 }
 
-class _BaseAppState extends State<BaseApp> {
+class _BaseAppState extends ConsumerState<BaseApp> {
   String page_name = 'home';
+  late dynamic wallet;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadWallet();
+  }
+
+  Future<void> loadWallet() async {
+    final result = await getWallet(
+      ref.read(baseUrl),
+      "PERSONAL",
+      ref.read(accessTokenProvider),
+    );
+    if(result['success']){
+      setState(() {
+        wallet = result;
+      });
+      ref.read(amountProvider.notifier).state = wallet['data']['balance'].toDouble();
+    }
+
+}
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Color(0xFF1E1E1E),
       body: Stack(
@@ -35,7 +64,6 @@ class _BaseAppState extends State<BaseApp> {
                   ? MoneyStatePage()
                   : null,
           ),
-          
 
           Positioned(
             bottom: 10,

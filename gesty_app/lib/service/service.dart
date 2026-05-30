@@ -50,13 +50,13 @@ Future<Map<String, dynamic>> login(String baseUrl, String email, String pass) as
   }
 }
 // WALLET
-Future<Map<String, dynamic>> getWallet(String baseUrl, int idUser,) async {
-  final url = Uri.parse('$baseUrl/wallet/login');
+Future<Map<String, dynamic>> getWallet(String baseUrl, String typeWallet, String token) async {
+  final url = Uri.parse('$baseUrl/wallets/one/$typeWallet');
 
   final request = await http.get(
     url,
     headers: {
-      
+      'Authorization': 'Bearer $token',
     }
   );
 
@@ -65,6 +65,7 @@ Future<Map<String, dynamic>> getWallet(String baseUrl, int idUser,) async {
     print("Get wallet amount Success, data: ${data}");
     return {
       "success": true,
+      "data": data
     };
   }else{
     print("Login Error , data: $data");
