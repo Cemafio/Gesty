@@ -10,44 +10,155 @@ import 'package:gesty_app/utils/extensionString.dart';
 import 'package:gesty_app/widget/categorie.dart';
 import 'package:gesty_app/widget/icon-btn.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
-import 'package:gesty_app/widget/simpel_btn.dart';
 import 'package:gesty_app/widget/transaction.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
+import 'package:gesty_app/service/service.dart';
+import 'package:gesty_app/widget/icon-txt-field.dart';
+import 'package:gesty_app/widget/simpel_btn.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
-  Widget build(BuildContext context, WidgetRef ref) {
+  @override
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  bool _isLoaded = false;
+
+  final  List<double> suggeste_amount = [1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000];
+
+  void changeCategorySelect(String t){
+
+    ref.read(categoriesProvider.notifier).state =
+      ref.read(categoriesProvider)
+      .map((c) {
+
+        return CategoryModel(
+          title: c.title,
+          selected: c.title == t,
+        );
+
+      }).toList();
+  } 
+
+  void insertAmountSuggest(String amount,){
+    setState(() {
+      amountController.text = amount;
+    });
+  }
+
+  void changeValueDescription(String desc,){
+    setState(() {
+      descriptionController.text = desc;
+    });
+  }
+
+  Future<void> depositTransaction(String type)async {
+    final _baseUrl = ref.watch(baseUrl);
+    final token = ref.watch(accessTokenProvider);
+    final double _amount = double.parse(amountController.text);
+    final int walletId = await ref.read(walletProvider.future).then((value) => value['id']);
+
+    if (_baseUrl != '' && token != '' && _amount > 0 && descriptionController.text != '') {
+      setState(() {
+        _isLoaded = true;
+      });
+      print(_isLoaded);
+
+      try {
+        final response = depositServiceTransaction(
+          idWallet: walletId,
+          amount: _amount,
+          baseUrl: _baseUrl,
+          category: type, 
+          token: token, 
+          type: type,
+          description: descriptionController.text
+        );
+
+        setState(() {
+          amountController.text = '';
+          descriptionController.text = '';
+        });
+        // Close the bottom sheet after the transaction is done
+        // Future.delayed(
+        //   const Duration(seconds: 1),
+        //   () => Navigator.pop(context),
+        // );
+        Navigator.pop(context);
+
+      } catch (e) {
+        throw Exception("Transaction error: $e");        
+      }finally {
+        setState(() {
+          _isLoaded = false;
+        });
+      print(_isLoaded);
+      }
+
+
+    }
+  }
+
+  void showDepositForm(List<dynamic> _color, String type) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.3,
+          width: MediaQuery.of(context).size.width,
+        
+          padding: .all(10),
+                      
+          decoration: BoxDecoration(
+            color: _color[2],
+            borderRadius: .only(topLeft: .circular(20),topRight: .circular(20))
+          ),
+        
+          child: Column(
+            mainAxisAlignment: .center,
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: 25
+                ),
+                child: ListView.builder(
+                  scrollDirection: .horizontal,
+                  itemCount: suggeste_amount.length,
+                                
+                  itemBuilder: (context, index){
+                    return CategorieSection(
+                      selected: amountController.text == suggeste_amount[index].toString(), 
+                      title: suggeste_amount[index].toString(),
+                      selectedAction: ()=>insertAmountSuggest(suggeste_amount[index].toString())
+                    );
+                  }
+                ),
+              ),
+
+              const SizedBox(height: 5,),  
+              TxtFielWIcon(label: 'How much ?',controllerText: amountController, actionSaved: insertAmountSuggest),
+              TxtFielWIcon(label: 'Your decription',controllerText: descriptionController, actionSaved: changeValueDescription, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
+              const SizedBox(height: 5,),  
+              SimpelBtn(action: ()=>depositTransaction(type),t: type=='INCOME'?'deposit':'withdraw',c: (amountController.text != ''&& descriptionController.text != '')? _color.first:_color[1],bold: true,isLoaded: _isLoaded,)
+
+            ],
+          ),
+        );
+      },
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
     final walletAsync = ref.watch(walletProvider);
 
     final transactions = ref.watch(transactionsProvider);
     final categories = ref.watch(categoriesProvider);
     final colorApp = ref.watch(color_theme);
-
-    void depositAction() {
-      // ref.read(amountProvider.notifier).state += 50000;
-    }
-
-    void withdrawAction() {
-      // ref.read(amountProvider.notifier).state -= 50000;
-    }
-
-    void changeCategorySelect(String t){
-
-      ref.read(categoriesProvider.notifier).state =
-          ref.read(categoriesProvider)
-          .map((c) {
-
-            return CategoryModel(
-              title: c.title,
-              selected: c.title == t,
-            );
-
-          }).toList();
-    } 
-
-
 
     return SizedBox(
       child: Column(
@@ -93,11 +204,11 @@ class HomePage extends ConsumerWidget {
                     mainAxisAlignment: .center,
                     crossAxisAlignment: .center,
                     children: [
-                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedAdd02, color: colorApp[3],), c: colorApp[1], r: 20, sizeIcon: 15, action: () => depositAction()),
+                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedAdd02, color: colorApp[3],), c: colorApp[1], r: 20, sizeIcon: 15, action: () => showDepositForm(colorApp, 'INCOME')),
                       const SizedBox(width: 10),
-                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedRemove02, color: colorApp.last,), c: colorApp[1], r: 20, sizeIcon: 15, action: () => depositAction()),
+                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedRemove02, color: colorApp.last,), c: colorApp[1], r: 20, sizeIcon: 15, action: () => showDepositForm(colorApp, 'EXPENSE')),
                       const SizedBox(width: 10),
-                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedAddToList, color: colorApp.first,), c: colorApp[1], r: 20, sizeIcon: 15, action: () => depositAction()),
+                      IconBtnWidget(iconBtn: Icon(HugeIcons.strokeRoundedAddToList, color: colorApp.first,), c: colorApp[1], r: 20, sizeIcon: 15, action: (){}),
                     ],
                   )
                 ],
@@ -153,7 +264,6 @@ class HomePage extends ConsumerWidget {
                           amount: "${transaction.type==TransactionType.expense ? '-' : '+'}${transaction.amount} Ar",
                           category: transaction.category, 
                         );
-
                       },
                     ),
                   ),

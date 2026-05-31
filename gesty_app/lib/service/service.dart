@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:gesty_app/models/transaction_model.dart';
 import 'package:http/http.dart' as http;
 
 // AUTHENTIFICATION
@@ -75,32 +74,32 @@ Future<void> depositServiceTransaction({
   required int idWallet,
   required String token,
   required String baseUrl,
-  required TransactionType type,
+  required String type,
   required double amount,
   required String category,
+  required String description,
 }) async {
-
   final url = Uri.parse('$baseUrl/transactions/create');
 
   final response = await http.post(
     url,
     headers: {
       'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
     },
     body: jsonEncode({
-      'amount': amount,
-      'type': type,
-      'description': 'Deposit',
-      'walletId': idWallet,
-      'categoryId': category,
+      "amount": amount,
+      "type": type,
+      "description": description,
+      "walletId": idWallet,
     }),
   );
 
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     print('Transaction created');
   } else {
     throw Exception(
-      'Erreur update : ${response.body}',
+      'Error to create this transaction: ${response.body}',
     );
   }
 }
