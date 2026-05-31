@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gesty_app/models/transaction_model.dart';
 import 'package:http/http.dart' as http;
 
 // AUTHENTIFICATION
@@ -62,7 +63,7 @@ Future<Map<String, dynamic>> getWallet(String baseUrl, String typeWallet, String
 
   final data = jsonDecode(request.body);
   if(request.statusCode == 200 || request.statusCode == 201){
-    print("Get wallet amount Success, data: ${data}");
+    print("Get wallet amount Success");
     return data;
   }else{
     print("Login Error , data: $data");
@@ -100,6 +101,33 @@ Future<void> depositServiceTransaction({
   } else {
     throw Exception(
       'Error to create this transaction: ${response.body}',
+    );
+  }
+}
+
+Future<List<TransactionModel>> getAllTransactions(String baseUrl, String token) async {
+  final url = Uri.parse('$baseUrl/transactions/all');
+
+  final response = await http.get(
+    url,
+    headers: {
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final List<TransactionModel> data = (jsonDecode(response.body) as List)
+                                            .map(
+                                              (e) => TransactionModel.fromJson(e),
+                                            )
+                                            .toList();
+    // print(data.runtimeType);
+    print('Transactions retrieved successfully, ${data.runtimeType}');
+
+    return data;
+  } else {
+    throw Exception(
+      'Error to retrieve transactions: ${response.body}',
     );
   }
 }

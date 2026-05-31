@@ -70,7 +70,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       print(_isLoaded);
 
       try {
-        final response = depositServiceTransaction(
+        final response = await depositServiceTransaction(
           idWallet: walletId,
           amount: _amount,
           baseUrl: _baseUrl,
@@ -80,16 +80,15 @@ class _HomePageState extends ConsumerState<HomePage> {
           description: descriptionController.text
         );
 
+        refreshData();
+
         setState(() {
           amountController.text = '';
           descriptionController.text = '';
         });
-        // Close the bottom sheet after the transaction is done
-        // Future.delayed(
-        //   const Duration(seconds: 1),
-        //   () => Navigator.pop(context),
-        // );
-        Navigator.pop(context);
+
+
+        Navigator.pop(context,true);
 
       } catch (e) {
         throw Exception("Transaction error: $e");        
@@ -97,11 +96,15 @@ class _HomePageState extends ConsumerState<HomePage> {
         setState(() {
           _isLoaded = false;
         });
-      print(_isLoaded);
+        print(_isLoaded);
       }
-
-
     }
+  }
+
+  Future<void> refreshData() async {
+    print('Refreshing data...');
+    await ref.refresh(walletProvider.future);
+    await ref.refresh(transactionsProvider.future);
   }
 
   void showDepositForm(List<dynamic> _color, String type) {
@@ -144,7 +147,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               TxtFielWIcon(label: 'How much ?',controllerText: amountController, actionSaved: insertAmountSuggest),
               TxtFielWIcon(label: 'Your decription',controllerText: descriptionController, actionSaved: changeValueDescription, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
               const SizedBox(height: 5,),  
-              SimpelBtn(action: ()=>depositTransaction(type),t: type=='INCOME'?'deposit':'withdraw',c: (amountController.text != ''&& descriptionController.text != '')? _color.first:_color[1],bold: true,isLoaded: _isLoaded,)
+              SimpelBtn(action: ()=> depositTransaction(type),t: type=='INCOME'?'deposit':'withdraw',c: (amountController.text != ''&& descriptionController.text != '')? _color.first:_color[1],bold: true,isLoaded: _isLoaded,)
 
             ],
           ),
@@ -249,24 +252,42 @@ class _HomePageState extends ConsumerState<HomePage> {
                       },
                     ),
                   ),
-                  const SizedBox(height: -0),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: transactions.length,
+                    child: transactions.when(
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
 
-                      itemBuilder: (context, index) {
+                      error: (err, stack){
+                        print(err);
+                        print(stack);
+                        
+                        return Text(
+                          'Erreur : $err',
+                        );
+                      },
 
-                        final transaction = transactions[index];
+                      data: (transactions) {
+                        print('Transaction list : $transactions');
+                        return ListView.builder(
+                          itemCount: transactions.length,
 
-                        return TransactionSection(
-                          title: transaction.title,
-                          date:  DateFormat('dd MMM, HH:mm').format(transaction.date),
-                          amount: "${transaction.type==TransactionType.expense ? '-' : '+'}${transaction.amount} Ar",
-                          category: transaction.category, 
+                          itemBuilder: (context, index) {
+                            final transaction = transactions[index];
+
+                            return TransactionSection(
+                              title: transaction.description,
+                              date:  DateFormat('dd MMM, HH:mm').format(transaction.createdAt),
+                              amount: "${transaction.type=='EXPENSE' ? '-' : '+'}${transaction.amount} Ar",
+                              category: transaction.type, 
+                            );
+                          },
                         );
                       },
                     ),
                   ),
+                  const SizedBox(height: 70),
+
                 ],
               ),
             ),

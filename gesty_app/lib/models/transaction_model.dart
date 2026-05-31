@@ -1,21 +1,26 @@
 class TransactionModel {
-
-  final String title;
+  final int id;
   final double amount;
-  final DateTime date;
-  final String category;
-  final TransactionType type;
-
+  final String type;
+  final String description;
+  final DateTime createdAt;
   TransactionModel({
-    required this.title,
+    required this.id,
     required this.amount,
-    required this.date,
-    required this.category,
     required this.type,
+    required this.description,
+    required this.createdAt,
   });
-}
 
-enum TransactionType {
-  income,
-  expense,
+  factory TransactionModel.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return TransactionModel(
+      id: json['id'],
+      amount: json['amount'].toDouble(),
+      type: json['type'],
+      description: json['description'],
+      createdAt: DateTime.parse(json['createdAt']),
+    );
+  }
 }

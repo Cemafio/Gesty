@@ -40,7 +40,9 @@ class _LoginState extends ConsumerState<Login> {
           final dataUser = response['user_data'];
           ref.read(user_data.notifier).state = UserModel(id: dataUser['id'], email: dataUser['email'], name: dataUser['name']);
           _keyform.currentState!.reset();
-
+          setState(() {
+            _errorMess = '';
+          });
           AppNavigator.navigate(context, BaseApp());
         }
         if(response['mess'] != null){

@@ -1,29 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gesty_app/models/transaction_model.dart';
+import 'package:gesty_app/providers/app_provider.dart';
+import 'package:gesty_app/service/service.dart';
 
 
-final transactionsProvider = StateProvider<List<TransactionModel>>((ref) {
-  return [
-    TransactionModel(
-      title: "Burger",
-      amount: 50000,
-      date: DateTime.now(),
-      category: "Food",
-      type: TransactionType.expense,
-    ),
-    TransactionModel(
-      title: "Deposit",
-      amount: 500000,
-      date: DateTime.now(),
-      category: "Depo",
-      type: TransactionType.income,
-    ),
-    TransactionModel(
-      title: "Le Fruit",
-      amount: 5500,
-      date: DateTime.now(),
-      category: "Juice",
-      type: TransactionType.expense,
-    ),    
-];
+final transactionsProvider = FutureProvider<List<TransactionModel>>((ref) async {
+  return await getAllTransactions(
+    ref.watch(baseUrl),
+    ref.watch(accessTokenProvider),
+  );
 });
