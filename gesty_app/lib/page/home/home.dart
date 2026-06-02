@@ -29,21 +29,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   final TextEditingController categoryController = TextEditingController();
   bool _isLoaded = false;
 
-  final  List<double> suggeste_amount = [1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000];
-
-  void changeCategorySelect(String t){
-
-    ref.read(categoriesProvider.notifier).state =
-      ref.read(categoriesProvider)
-      .map((c) {
-
-        return CategoryModel(
-          title: c.title,
-          selected: c.title == t,
-        );
-
-      }).toList();
-  } 
+  final  List<double> suggeste_amount = [500, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000];
+  
+  void changeCategorySelect(String name) {
+    ref.read(selectedCategoryProvider.notifier).state = name;
+  }
 
   void changeValueTextController(String value,String type){
     setState(() {
@@ -84,7 +74,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           description: descriptionController.text,
           categoryName: categoryController.text,
         );
-        // await createCategory(baseUrl: _baseUrl, token: token, name: categoryController.text, walletId: walletId);
         refreshData();
         setState(() {
           amountController.text = '';
@@ -108,6 +97,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     print('Refreshing data...');
     await ref.refresh(walletProvider.future);
     await ref.refresh(transactionsProvider.future);
+    await ref.refresh(futureCategoryProvider.future);
   }
 
   void showDepositForm(List<dynamic> _color, String type) {
@@ -163,10 +153,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final walletAsync = ref.watch(walletProvider);
-
+    final selectedCategoryName = ref.watch(selectedCategoryProvider); 
     final transactions = ref.watch(transactionsProvider);
-    final categories = ref.watch(categoriesProvider);
     final colorApp = ref.watch(color_theme);
+    final futureCategory = ref.watch(futureCategoryProvider);
 
     return SizedBox(
       child: Column(
@@ -236,21 +226,34 @@ class _HomePageState extends ConsumerState<HomePage> {
                   SizedBox(
                     height: 25,
 
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: categories.length,
+                    child: futureCategory.when(
+                      data: (c) {
+                        // print('Categories loaded: $c');
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: c.length,
+                          itemBuilder: (context, index) {
+                            final category = c[index];
 
-                      itemBuilder: (context, index) {
-
-                        final category = categories[index];
-
-                        return CategorieSection(
-                          title: category.title,
-                          selected: category.selected,
-                          selectedAction: () => changeCategorySelect(category.title),
+                            return CategorieSection(
+                              title: category.name,
+                              selected: category.name == selectedCategoryName,
+                              selectedAction: () {
+                                changeCategorySelect(category.name);
+                              },
+                            );
+                          },
                         );
                       },
-                    ),
+
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+
+                      error: (error, stack) => Center(
+                        child: Text(error.toString()),
+                      ),
+                    )
                   ),
                   Expanded(
                     child: transactions.when(

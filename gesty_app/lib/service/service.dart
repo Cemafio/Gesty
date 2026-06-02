@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:math';
+import 'package:gesty_app/models/category_model.dart';
 import 'package:gesty_app/models/transaction_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -123,7 +125,6 @@ Future<List<TransactionModel>> getAllTransactions(String baseUrl, String token) 
                                               (e) => TransactionModel.fromJson(e),
                                             )
                                             .toList();
-    // print(data.runtimeType);
     print('Transactions retrieved successfully, ${data.runtimeType}');
 
     return data;
@@ -134,31 +135,28 @@ Future<List<TransactionModel>> getAllTransactions(String baseUrl, String token) 
   }
 }
 
-Future<void> createCategory({
+Future<List<CategoryModel>> getAllCategory({
   required String baseUrl,
   required String token,
-  required String name,
   required int walletId
 }) async {
-  final url = Uri.parse('$baseUrl/categories/create');
+  final url = Uri.parse('$baseUrl/categories/all');
 
-  final response = await http.post(
+  final response = await http.get(
     url,
     headers: {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     },
-    body: jsonEncode({
-      "name": name,
-      "walletId": walletId
-    }),
   );
 
-  if (response.statusCode == 201) {
-    print('Category created');
+  if (response.statusCode == 200) {
+    print('Categories retrieved successfully' );
+    final data = (jsonDecode(response.body) as List).map((c)=> CategoryModel.fromJson(c)).toList();
+    return data;
   } else {
     throw Exception(
-      'Error to create this category: ${response.body}',
+      'Error to retrieve categories: ${response.body}',
     );
   }
 }
