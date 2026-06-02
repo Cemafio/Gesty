@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gesty_app/models/category_model.dart';
-import 'package:gesty_app/models/transaction_model.dart';
 import 'package:gesty_app/providers/wallet_provider.dart';
 import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/providers/categories_provider.dart';
@@ -27,6 +26,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   final TextEditingController amountController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController categoryController = TextEditingController();
   bool _isLoaded = false;
 
   final  List<double> suggeste_amount = [1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000];
@@ -45,15 +45,20 @@ class _HomePageState extends ConsumerState<HomePage> {
       }).toList();
   } 
 
-  void insertAmountSuggest(String amount,){
+  void changeValueTextController(String value,String type){
     setState(() {
-      amountController.text = amount;
-    });
-  }
-
-  void changeValueDescription(String desc,){
-    setState(() {
-      descriptionController.text = desc;
+      switch (type) {
+        case 'How much ?':
+          amountController.text = value;
+          break;
+        case 'Your description':
+          descriptionController.text = value;
+          break;
+        case 'His category':
+          categoryController.text = value;
+          break;
+        default:
+      }
     });
   }
 
@@ -67,26 +72,25 @@ class _HomePageState extends ConsumerState<HomePage> {
       setState(() {
         _isLoaded = true;
       });
-      print(_isLoaded);
 
       try {
-        final response = await depositServiceTransaction(
+        await depositServiceTransaction(
           idWallet: walletId,
           amount: _amount,
           baseUrl: _baseUrl,
           category: type, 
           token: token, 
           type: type,
-          description: descriptionController.text
+          description: descriptionController.text,
+          categoryName: categoryController.text,
         );
-
+        // await createCategory(baseUrl: _baseUrl, token: token, name: categoryController.text, walletId: walletId);
         refreshData();
-
         setState(() {
           amountController.text = '';
           descriptionController.text = '';
+          categoryController.text = '';
         });
-
 
         Navigator.pop(context,true);
 
@@ -96,7 +100,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         setState(() {
           _isLoaded = false;
         });
-        print(_isLoaded);
       }
     }
   }
@@ -112,7 +115,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       context: context,
       builder: (context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.3,
+          height: MediaQuery.of(context).size.height * 0.4,
           width: MediaQuery.of(context).size.width,
         
           padding: .all(10),
@@ -137,17 +140,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                     return CategorieSection(
                       selected: amountController.text == suggeste_amount[index].toString(), 
                       title: suggeste_amount[index].toString(),
-                      selectedAction: ()=>insertAmountSuggest(suggeste_amount[index].toString())
+                      selectedAction: ()=>changeValueTextController(suggeste_amount[index].toString(), 'How much ?'),
                     );
                   }
                 ),
               ),
 
               const SizedBox(height: 5,),  
-              TxtFielWIcon(label: 'How much ?',controllerText: amountController, actionSaved: insertAmountSuggest),
-              TxtFielWIcon(label: 'Your decription',controllerText: descriptionController, actionSaved: changeValueDescription, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
+              TxtFielWIcon(label: 'How much ?',controllerText: amountController, actionSaved: changeCategorySelect),
+              TxtFielWIcon(label: 'Your description',controllerText: descriptionController, actionSaved: changeValueTextController, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
               const SizedBox(height: 5,),  
-              SimpelBtn(action: ()=> depositTransaction(type),t: type=='INCOME'?'deposit':'withdraw',c: (amountController.text != ''&& descriptionController.text != '')? _color.first:_color[1],bold: true,isLoaded: _isLoaded,)
+              TxtFielWIcon(label: 'His category',controllerText: categoryController, actionSaved: changeValueTextController, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
+              const SizedBox(height: 5,),  
+              SimpelBtn(action: ()=> depositTransaction(type),t: type=='INCOME'?'deposit':'withdraw',c: (amountController.text != ''&& descriptionController.text != ''&& categoryController.text != '')? _color.first:_color[1],bold: true,isLoaded: _isLoaded,)
 
             ],
           ),
@@ -185,7 +190,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                   MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,),
               
                   const SizedBox(height: 5),
-
                   walletAsync.when(
                     data: (wallet) => Text(
                       "${wallet['balance']} Ar",
@@ -199,8 +203,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                     loading: () => CircularProgressIndicator(),
                     error: (e, _) => Text(e.toString()),
                   ),
-
-                  
               
                   const SizedBox(height: 15),
                   Row(
@@ -230,9 +232,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   const SizedBox(height: 40),
-
                   SizedBox(
                     height: 25,
 
@@ -268,7 +268,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                       },
 
                       data: (transactions) {
-                        print('Transaction list : $transactions');
                         return ListView.builder(
                           itemCount: transactions.length,
 

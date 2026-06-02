@@ -79,6 +79,7 @@ Future<void> depositServiceTransaction({
   required double amount,
   required String category,
   required String description,
+  required String categoryName,
 }) async {
   final url = Uri.parse('$baseUrl/transactions/create');
 
@@ -93,6 +94,7 @@ Future<void> depositServiceTransaction({
       "type": type,
       "description": description,
       "walletId": idWallet,
+      "categoryName": categoryName,
     }),
   );
 
@@ -128,6 +130,35 @@ Future<List<TransactionModel>> getAllTransactions(String baseUrl, String token) 
   } else {
     throw Exception(
       'Error to retrieve transactions: ${response.body}',
+    );
+  }
+}
+
+Future<void> createCategory({
+  required String baseUrl,
+  required String token,
+  required String name,
+  required int walletId
+}) async {
+  final url = Uri.parse('$baseUrl/categories/create');
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      "name": name,
+      "walletId": walletId
+    }),
+  );
+
+  if (response.statusCode == 201) {
+    print('Category created');
+  } else {
+    throw Exception(
+      'Error to create this category: ${response.body}',
     );
   }
 }

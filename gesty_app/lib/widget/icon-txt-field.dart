@@ -24,7 +24,7 @@ class _TxtFielWIconState extends State<TxtFielWIcon> {
           children: [
             TextFormField(
               controller: widget.controllerText,
-              onChanged: (value) => widget.actionSaved(value),
+              onChanged: (value) => widget.actionSaved(value, widget.label),
               
               keyboardType:(widget.label == 'How much ?')
                 ?TextInputType.number
