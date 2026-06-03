@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gesty_app/models/category_model.dart';
+import 'package:gesty_app/models/transaction_model.dart';
 import 'package:gesty_app/providers/wallet_provider.dart';
 import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/providers/categories_provider.dart';
@@ -28,11 +29,15 @@ class _HomePageState extends ConsumerState<HomePage> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
   bool _isLoaded = false;
+  List<TransactionModel> transactionForCategery = [];
 
   final  List<double> suggeste_amount = [500, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000];
   
-  void changeCategorySelect(String name) {
-    ref.read(selectedCategoryProvider.notifier).state = name;
+  void changeCategorySelect(String catego, int categoiryId) async {
+    ref.read(selectedCategoryProvider.notifier).state = catego;
+      transactionForCategery = ref.read(transactionsProvider).value!
+        .where((c) => c .categoryId == categoiryId)
+        .toList();
   }
 
   void changeValueTextController(String value,String type){
@@ -150,6 +155,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final walletAsync = ref.watch(walletProvider);
@@ -239,7 +245,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                               title: category.name,
                               selected: category.name == selectedCategoryName,
                               selectedAction: () {
-                                changeCategorySelect(category.name);
+                                changeCategorySelect(category.name, category.categoryId);
                               },
                             );
                           },
@@ -255,39 +261,59 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     )
                   ),
-                  Expanded(
-                    child: transactions.when(
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
 
-                      error: (err, stack){
-                        print(err);
-                        print(stack);
-                        
-                        return Text(
-                          'Erreur : $err',
-                        );
-                      },
+                  if(transactionForCategery.isNotEmpty)
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: transactionForCategery.length,
 
-                      data: (transactions) {
-                        return ListView.builder(
-                          itemCount: transactions.length,
+                        itemBuilder: (context, index) {
+                          final transaction = transactionForCategery[index];
 
-                          itemBuilder: (context, index) {
-                            final transaction = transactions[index];
-
-                            return TransactionSection(
-                              title: transaction.description,
-                              date:  DateFormat('dd MMM, HH:mm').format(transaction.createdAt),
-                              amount: "${transaction.type=='EXPENSE' ? '-' : '+'}${transaction.amount} Ar",
-                              category: transaction.type, 
-                            );
-                          },
-                        );
-                      },
+                          return TransactionSection(
+                            title: transaction.description,
+                            date:  DateFormat('dd MMM, HH:mm').format(transaction.createdAt),
+                            amount: "${transaction.type=='EXPENSE' ? '-' : '+'}${transaction.amount} Ar",
+                            category: transaction.type, 
+                          );
+                        },
+                      )
                     ),
-                  ),
+
+                  if(transactionForCategery.isEmpty)
+                    Expanded(
+                      child: transactions.when(
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+
+                        error: (err, stack){
+                          print(err);
+                          print(stack);
+                          
+                          return Text(
+                            'Erreur : $err',
+                          );
+                        },
+
+                        data: (transactions) {
+                          return ListView.builder(
+                            itemCount: transactions.length,
+
+                            itemBuilder: (context, index) {
+                              final transaction = transactions[index];
+
+                              return TransactionSection(
+                                title: transaction.description,
+                                date:  DateFormat('dd MMM, HH:mm').format(transaction.createdAt),
+                                amount: "${transaction.type=='EXPENSE' ? '-' : '+'}${transaction.amount} Ar",
+                                category: transaction.type, 
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
                   const SizedBox(height: 70),
 
                 ],

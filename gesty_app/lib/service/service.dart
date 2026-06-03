@@ -121,10 +121,12 @@ Future<List<TransactionModel>> getAllTransactions(String baseUrl, String token) 
 
   if (response.statusCode == 200) {
     final List<TransactionModel> data = (jsonDecode(response.body) as List)
-                                            .map(
-                                              (e) => TransactionModel.fromJson(e),
-                                            )
-                                            .toList();
+      .map(
+        (e) {
+          return TransactionModel.fromJson(e);
+        },
+      )
+      .toList();
     print('Transactions retrieved successfully, ${data.runtimeType}');
 
     return data;
