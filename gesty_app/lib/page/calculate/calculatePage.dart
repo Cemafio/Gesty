@@ -19,6 +19,7 @@ class _CalculatePageState extends State<CalculatePage> {
           child: MiniProfil(
             name: "Cesar",
             email: "cesar@gmail.com",
+            marging: 16,
           )
         ),
         // const SizedBox(height: 200),Contain

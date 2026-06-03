@@ -22,6 +22,8 @@ class _TransactionSectionState extends State<TransactionSection> {
     "Transport": HugeIcons.strokeRoundedBus03,
     "Fix": HugeIcons.strokeRoundedConfiguration02,
     "Juice": HugeIcons.strokeRoundedBubbleTea02,
+    "EXPENSE": HugeIcons.strokeRoundedMoneyRemove01,
+    "INCOME": HugeIcons.strokeRoundedMoneyAdd01,
   };
   @override
   Widget build(BuildContext context) {

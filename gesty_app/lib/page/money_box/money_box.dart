@@ -22,6 +22,7 @@ class _MoneyBoxState extends State<MoneyBox> {
           child: MiniProfil(
             name: "Cesar",
             email: "cesar@gmail.com",
+            marging: 16,
           )
         ),
         const SizedBox(height: 50),

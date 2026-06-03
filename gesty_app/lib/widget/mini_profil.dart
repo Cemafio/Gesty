@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class MiniProfil extends StatefulWidget {
   final String? name;
   final String? email;
-  const MiniProfil({super.key, this.name, this.email});
+  final double? marging;
+  const MiniProfil({super.key, this.name, this.email, this.marging});
 
   @override
   State<MiniProfil> createState() => _MiniProfilState();
@@ -14,6 +15,7 @@ class _MiniProfilState extends State<MiniProfil> {
   Widget build(BuildContext context) {
     return Container(
         padding: .all(16),
+        margin: widget.marging != null ? EdgeInsets.all(widget.marging!) : null,
         height: 85,
         width: double.infinity,
         child: Column(
