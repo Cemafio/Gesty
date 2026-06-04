@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/providers/categories_provider.dart';
 import 'package:gesty_app/providers/transaction_provider.dart';
 import 'package:gesty_app/widget/aleatoireColors.dart';
 import 'package:gesty_app/widget/legendItem.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class MoneyStatePage extends ConsumerStatefulWidget {
   const MoneyStatePage({super.key});
@@ -19,11 +19,19 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorApp = ref.watch(color_theme);
+
     final expenses = ref.watch(transactionsProvider).value!
       .where((t) => t.type == 'EXPENSE')
       .toList();
-    final futureCategory = ref.watch(futureCategoryProvider);
 
+    final incomes = ref.watch(transactionsProvider).value!
+      .where((t) => t.type == 'INCOME')
+      .toList();
+
+    final futureCategory = ref.watch(futureCategoryProvider);
+    final sommeExpenses = expenses.fold<double>(0, (sum, t) => sum + t.amount);
+    final sommeIncomes = incomes.fold<double>(0, (sum, t) => sum + t.amount);
 
     Map<String, double> categoriesAmount = {};
 
@@ -53,32 +61,88 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
     return SafeArea(
       child: Column(
         children: [
-           MiniProfil(
-              name: "Cesar",
-              email: "cesar@gmail.com",
-              marging: 16,
-            ),
-      
+          MiniProfil(
+            name: "Cesar",
+            email: "cesar@gmail.com",
+            marging: 16,
+          ),
+    
           const SizedBox(height: 10),
-          Text(
-            "Your expenses",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Jersey15',
-            ),
+          Row(
+            mainAxisAlignment: .center,
+            children: [
+
+              Container(
+                width: 160,
+                padding: .symmetric(horizontal: 12, vertical: 12),
+                // height: 90,
+
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+
+                child: Column(
+                  mainAxisAlignment: .spaceAround,
+                  children: [
+                    Text(
+                      "Expenses",
+                      style: TextStyle(
+                        color: colorApp[4],
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Jersey15',
+                      )
+                    ),
+                    Text(
+                      "-${sommeExpenses.toStringAsFixed(2)} ar",
+                      style: TextStyle(
+                        color: colorApp.last,
+                        fontSize: 25,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Jersey15',
+                      )
+                    ),
+
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Container(
+                width: 160,
+                padding: .symmetric(horizontal: 12, vertical: 12),
+                // height: 90,
+
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+
+                child: Column(
+                  mainAxisAlignment: .spaceAround,
+                  children: [
+                    Text(
+                      "Incomes",
+                      style: TextStyle(
+                        color: colorApp[4],
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Jersey15',
+                      )
+                    ),
+                    Text(
+                      "+${sommeIncomes.toStringAsFixed(2)} ar",
+                      style: TextStyle(
+                        color: colorApp[3],
+                        fontSize: 22,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Jersey15',
+                      )
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Text(
-            "statistics",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Jersey15',
-            ),
-          ),
-      
+          
           const SizedBox(height: 50),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
@@ -91,13 +155,12 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
             ),
           ),
       
-          const SizedBox(height: 50),
+          const SizedBox(height: 60),
           Container(
             width: MediaQuery.of(context).size.width * 0.9,
-            height: 200,
+            // height: 200,
             padding: .all(16),
             decoration: BoxDecoration(
-              // color: Color(0xFF242424),
               borderRadius: BorderRadius.circular(10)
             ),
       
@@ -114,15 +177,6 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
               }).toList(),
             )
           ),
-      
-          Row(
-            mainAxisAlignment: .spaceAround,
-            children: [
-      
-            ],
-          ),
-      
-          
         ],
       ),
     );

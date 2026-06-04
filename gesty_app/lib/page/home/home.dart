@@ -107,6 +107,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void showDepositForm(List<dynamic> _color, String type) {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (context) {
         return Container(
@@ -114,6 +115,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           width: MediaQuery.of(context).size.width,
         
           padding: .all(10),
+          margin: .only(bottom: MediaQuery.of(context).viewInsets.bottom),
                       
           decoration: BoxDecoration(
             color: _color[2],
@@ -148,7 +150,6 @@ class _HomePageState extends ConsumerState<HomePage> {
               TxtFielWIcon(label: 'His category',controllerText: categoryController, actionSaved: changeValueTextController, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
               const SizedBox(height: 5,),  
               SimpelBtn(action: ()=> depositTransaction(type),t: type=='INCOME'?'deposit':'withdraw',c: (amountController.text != ''&& descriptionController.text != ''&& categoryController.text != '')? _color.first:_color[1],bold: true,isLoaded: _isLoaded,)
-
             ],
           ),
         );

@@ -31,7 +31,7 @@ class _MoneyBoxState extends State<MoneyBox> {
             width: 300,
             height: 300,
             child: LiquidCircularProgressIndicator(
-              value: 0.5,
+              value: 0.2,
               valueColor: AlwaysStoppedAnimation(
                 const Color.fromARGB(255, 51, 51, 51),
               ),
