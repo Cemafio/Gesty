@@ -21,9 +21,7 @@ class MoneyBox extends ConsumerStatefulWidget {
 }
 
 class _MoneyBoxState extends ConsumerState<MoneyBox> {
-  double level = 0.7;
   bool _isLoaded = false;
-
   TextEditingController amountController = TextEditingController();
   final  List<double> suggeste_amount = [500, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000];
 
