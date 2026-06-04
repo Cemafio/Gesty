@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:gesty_app/models/category_model.dart';
+import 'package:gesty_app/models/money_box_model.dart';
 import 'package:gesty_app/models/transaction_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -136,7 +137,7 @@ Future<List<TransactionModel>> getAllTransactions(String baseUrl, String token) 
     );
   }
 }
-
+// CATEGORY
 Future<List<CategoryModel>> getAllCategory({
   required String baseUrl,
   required String token,
@@ -159,6 +160,58 @@ Future<List<CategoryModel>> getAllCategory({
   } else {
     throw Exception(
       'Error to retrieve categories: ${response.body}',
+    );
+  }
+}
+// MONEY BOX
+Future<List<MoneyBoxModel>> getMoneyBox(String baseUrl, String token) async {
+  final url = Uri.parse('$baseUrl/money-box/all');
+
+  final response = await http.get(
+    url,
+    headers: {
+      'Authorization': 'Bearer $token',
+    }
+  );
+  
+  if(response.statusCode == 200) {
+    final List<MoneyBoxModel> data = (jsonDecode(response.body) as List)
+      .map(
+        (e) {
+          return MoneyBoxModel.fromJson(e);
+        },
+      )
+      .toList();
+    print('Money boxes retrieved successfully, ${data.runtimeType}');
+
+    return data;
+  } else {
+    throw Exception(
+      'Error to retrieve money boxes: ${response.body}',
+    );
+  }
+}
+Future<void> updateMoneyBoxAPI({required String baseUrl, required String token, required double amountInBox, required int id}) async {
+  print('Amount in service to update: $amountInBox');
+
+  final url = Uri.parse('$baseUrl/money-box/update/$id');
+
+  final response = await http.put(
+    url,
+    headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json'
+    },
+    body: jsonEncode({
+      "amountInBox": amountInBox
+    }),
+  );
+
+  if(response.statusCode == 200) {
+    print('Money box updated successfully');
+  } else {
+    throw Exception(
+      'Error to update money box: ${response.body}',
     );
   }
 }

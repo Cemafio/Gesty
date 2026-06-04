@@ -24,7 +24,7 @@ class _TxtFielWIconState extends State<TxtFielWIcon> {
           children: [
             TextFormField(
               controller: widget.controllerText,
-              onChanged: (value) => widget.actionSaved(value, widget.label),
+              onChanged: (value) => widget.actionSaved(value),
               
               keyboardType:(widget.label == 'How much ?')
                 ?TextInputType.number
@@ -40,9 +40,9 @@ class _TxtFielWIconState extends State<TxtFielWIcon> {
             
                 return null;
               },
-              onSaved: (newValue) => newValue != '' 
-                ? widget.actionSaved(newValue, widget.label)
-                : null,
+              // onSaved: (newValue) => newValue != '' 
+              //   ? widget.actionSaved(newValue, widget.label)
+              //   : null,
             
               decoration: InputDecoration(
                 prefixIcon: widget.icon ?? Icon(HugeIcons.strokeRoundedCoins01, color: Colors.white,),
