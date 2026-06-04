@@ -29,13 +29,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
   bool _isLoaded = false;
-  List<TransactionModel> transactionForCategery = [];
 
   final  List<double> suggeste_amount = [500, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000];
   
-  void changeCategorySelect(String catego, int categoiryId) async {
+  void changeCategorySelect(String catego, int categoiryId, ) async {
     ref.read(selectedCategoryProvider.notifier).state = catego;
-      transactionForCategery = ref.read(transactionsProvider).value!
+      ref.read(categoriesFilteredProvider.notifier).state = ref.read(transactionsProvider).value!
         .where((c) => c .categoryId == categoiryId)
         .toList();
   }
@@ -164,6 +163,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final transactions = ref.watch(transactionsProvider);
     final colorApp = ref.watch(color_theme);
     final futureCategory = ref.watch(futureCategoryProvider);
+    final transactionForCategery = ref.watch(categoriesFilteredProvider);
 
     return SizedBox(
       child: Column(

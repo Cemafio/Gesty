@@ -10,3 +10,4 @@ final transactionsProvider = FutureProvider<List<TransactionModel>>((ref) async 
     ref.watch(accessTokenProvider),
   );
 });
+final categoriesFilteredProvider = StateProvider<List<TransactionModel>>((ref)=> []);
