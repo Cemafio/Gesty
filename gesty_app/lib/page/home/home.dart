@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gesty_app/models/category_model.dart';
-import 'package:gesty_app/models/transaction_model.dart';
 import 'package:gesty_app/providers/wallet_provider.dart';
 import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/providers/categories_provider.dart';
@@ -198,7 +196,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                       )
                     ),
                     loading: () => CircularProgressIndicator(),
-                    error: (e, _) => Text(e.toString()),
+                    error: (e, _) => Text(
+                      "0 Ar",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 50,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Jersey15',
+                      )
+                    ),
                   ),
               
                   const SizedBox(height: 15),

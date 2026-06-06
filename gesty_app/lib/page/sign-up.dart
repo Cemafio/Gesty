@@ -22,6 +22,7 @@ class _SignUpState extends ConsumerState<SignUp> {
   String _pass = '';
   bool _isLoading = false;
   String _errorMess = '';
+  bool _isPassObscured = true;
 
   Future<void> signUpAction(BuildContext context, String url) async {
     setState(() {
@@ -79,7 +80,11 @@ class _SignUpState extends ConsumerState<SignUp> {
       }
     });
   }
-
+  void changeObscuredText(){
+    setState(() {
+      _isPassObscured = !_isPassObscured;
+    });
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +124,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                 children: [
                   TxtField(label: 'Name',actionSaved: _savedValue,),
                   TxtField(label: 'Email',actionSaved: _savedValue),
-                  TxtField(label: 'Password',actionSaved: _savedValue),
+                  TxtField(label: 'Password',actionSaved: _savedValue, obscuredText: _isPassObscured,changeObscureText:() => changeObscuredText(),),
                 ],
               )
             ),
@@ -135,7 +140,7 @@ class _SignUpState extends ConsumerState<SignUp> {
               
             const SizedBox(height: 10),            
             
-            SimpelBtn(t: "Sign up", w: 270, h: 45, c: Color.fromRGBO(139, 18, 177, 1.0), isLoaded: _isLoading,action: () => signUpAction(context, _baseUrl),), 
+            SimpelBtn(t: "Sign up", w: 270, h: 45, c: Color.fromRGBO(139, 18, 177, 1.0), isLoaded: _isLoading,action: () => signUpAction(context, _baseUrl)), 
 
           ],
         ),

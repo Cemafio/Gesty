@@ -13,7 +13,7 @@ final color_theme = StateProvider<List<dynamic>>((ref){
   ];
 });
 
-final baseUrl = StateProvider<String>((ref) => 'http://10.76.52.28:3000');
+final baseUrl = StateProvider<String>((ref) => 'https://gesty-api.onrender.com');
 final accessTokenProvider = StateProvider<String>((ref) => '');
 
 final user_data = StateProvider<UserModel?>((ref) => null);
