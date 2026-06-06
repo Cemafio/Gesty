@@ -6,6 +6,7 @@ import 'package:gesty_app/providers/categories_provider.dart';
 import 'package:gesty_app/providers/transaction_provider.dart';
 import 'package:gesty_app/utils/extensionString.dart';
 import 'package:gesty_app/widget/categorie.dart';
+import 'package:gesty_app/widget/emptyState.dart';
 import 'package:gesty_app/widget/icon-btn.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 import 'package:gesty_app/widget/transaction.dart';
@@ -14,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:gesty_app/service/service.dart';
 import 'package:gesty_app/widget/icon-txt-field.dart';
 import 'package:gesty_app/widget/simpel_btn.dart';
+import 'package:lottie/lottie.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -237,7 +239,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 children: [
                   const SizedBox(height: 40),
                   SizedBox(
-                    height: 25,
+                    // height: 25,
 
                     child: futureCategory.when(
                       data: (c) {
@@ -264,7 +266,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
 
                       error: (error, stack) => Center(
-                        child: Text(error.toString()),
+                        child: EmptyState(title: "No transaction", subtitle: "Deposit money to start"),
                       ),
                     )
                   ),
