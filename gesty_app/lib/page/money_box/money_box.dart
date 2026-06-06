@@ -38,12 +38,16 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
       _isLoaded = true;
     });
 
+    final amount = double.tryParse(amountController.text);
+    
+    if (amount == null) return;
+
     try {
       await updateMoneyBoxAPI(
         id: ref.watch(moneyBoxProvider).value![0].id,
         baseUrl: ref.watch(baseUrl),
         token: ref.watch(accessTokenProvider),
-        amountInBox: double.parse(amountController.text),
+        amountInBox: amount,
       );
 
       ref.refresh(moneyBoxProvider);
