@@ -9,7 +9,9 @@ import 'package:gesty_app/widget/categorie.dart';
 import 'package:gesty_app/widget/emptyState.dart';
 import 'package:gesty_app/widget/icon-btn.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
+import 'package:gesty_app/widget/skeletonWidget.dart';
 import 'package:gesty_app/widget/transaction.dart';
+import 'package:gesty_app/widget/transaction_skeleton.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:gesty_app/service/service.dart';
@@ -266,8 +268,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                           );
                         },
 
-                        loading: () => const Center(
-                          child: CircularProgressIndicator(),
+                        loading: () => Row(
+                          children: List.generate(4, (index) => 
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: SkeletonBox(width: 50, height: 20, radius: 6),
+                            )
+                          ),
                         ),
 
                         error: (error, stack) => Center(
@@ -299,9 +306,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                   if(transactionForCategery.isEmpty)
                     Expanded(
                       child: transactions.when(
-                        loading: () => const Center(
-                          child: CircularProgressIndicator(),
+                        loading: () => ListView.builder(
+                          itemCount: 5, // 5 skeletons
+                          itemBuilder: (context, index) => const SkeletonTransaction(),
                         ),
+
 
                         error: (err, stack){
                           print(err);
