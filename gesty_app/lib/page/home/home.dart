@@ -200,10 +200,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                         skipLoadingOnRefresh: true,
                         data: (wallet) {
                           final isVisible = ref.watch(isBalanceVisibleProvider);
+                          final balance = wallet['balance'];
+                          final formatted = NumberFormat('#,###', 'fr_FR').format(balance);
+                          final obscured = "•" * balance.toString().length;
+
                           return Text(
                             isVisible 
-                              ? "${wallet['balance']} Ar" 
-                              : "${"•" * wallet['balance'].toString().length} Ar",
+                              ? "$formatted Ar" 
+                              : "$obscured Ar",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 50,
@@ -293,7 +297,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         },
 
                         loading: () => Row(
-                          children: List.generate(4, (index) => 
+                          children: List.generate(6, (index) => 
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: SkeletonBox(width: 50, height: 20),
@@ -316,11 +320,12 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                         itemBuilder: (context, index) {
                           final transaction = transactionForCategery[index];
+                          final formatted = NumberFormat('#,###', 'fr_FR').format(transaction.amount);
 
                           return TransactionSection(
                             title: transaction.description,
                             date:  DateFormat('dd MMM, HH:mm').format(transaction.createdAt),
-                            amount: "${transaction.type=='EXPENSE' ? '-' : '+'}${transaction.amount} Ar",
+                            amount: "${transaction.type=='EXPENSE' ? '-' : '+'}$formatted Ar",
                             category: transaction.type, 
                           );
                         },
@@ -363,11 +368,12 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                             itemBuilder: (context, index) {
                               final transaction = transactions[index];
+                              final formatted = NumberFormat('#,###', 'fr_FR').format(transaction.amount);
 
                               return TransactionSection(
                                 title: transaction.description,
                                 date:  DateFormat('dd MMM, HH:mm').format(transaction.createdAt),
-                                amount: "${transaction.type=='EXPENSE' ? '-' : '+'}${transaction.amount} Ar",
+                                amount: "${transaction.type=='EXPENSE' ? '-' : '+'}$formatted Ar",
                                 category: transaction.type, 
                               );
                             },
