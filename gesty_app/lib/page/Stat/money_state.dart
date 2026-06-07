@@ -63,7 +63,7 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
     return SafeArea(
       child: Column(
         children: [
-          MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,marging: 16,),
+          // MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,marging: 16,),
     
           if(sections.isEmpty) ...[
             const SizedBox(height: 60),
@@ -72,7 +72,7 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
           
           if(sections.isNotEmpty) ...[
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 150),
             Row(
               mainAxisAlignment: .center,
               children: [

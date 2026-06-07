@@ -8,6 +8,7 @@ import 'package:gesty_app/utils/extensionString.dart';
 import 'package:gesty_app/widget/categorie.dart';
 import 'package:gesty_app/widget/emptyState.dart';
 import 'package:gesty_app/widget/icon-btn.dart';
+import 'package:gesty_app/widget/loading.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 import 'package:gesty_app/widget/skeletonWidget.dart';
 import 'package:gesty_app/widget/transaction.dart';
@@ -335,14 +336,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   if(transactionForCategery.isEmpty)
                     Expanded(
                       child: transactions.when(
-                        loading: () => Center(
-                          child:  Lottie.asset(
-                            'assets/animations/loading_hand.json',
-                            width: 150,
-                            height:150,
-                            repeat: true,
-                          ),
-                        ),
+                        loading: () => GestyLoadingWidget(),
                         // ListView.builder(
                         //   itemCount: 5, // 5 skeletons
                         //   itemBuilder: (context, index) => const SkeletonTransaction(),

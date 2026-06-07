@@ -15,13 +15,7 @@ class _CalculatePageState extends State<CalculatePage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SafeArea(
-          child: MiniProfil(
-            name: "Cesar",
-            email: "cesar@gmail.com",
-            marging: 16,
-          )
-        ),
+        const SizedBox(height: 150),
         // const SizedBox(height: 200),Contain
         Expanded(
           child: CalculatorGrid(),

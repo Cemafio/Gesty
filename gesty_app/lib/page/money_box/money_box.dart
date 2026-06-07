@@ -11,6 +11,7 @@ import 'package:gesty_app/widget/categorie.dart';
 import 'package:gesty_app/widget/dynamic_modal.dart';
 import 'package:gesty_app/widget/emptyState.dart';
 import 'package:gesty_app/widget/icon-txt-field.dart';
+import 'package:gesty_app/widget/loading.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 import 'package:gesty_app/widget/simpel_btn.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -37,13 +38,6 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
       amountController.text = value;
     });
   }
-  // void changeValueTextController(String value){
-  //   print('name in function: ${value}');
-
-  //   setState(() {
-  //     nameController.text = value;
-  //   });
-  // }
 
   void _update() async {
     setState(() {
@@ -137,95 +131,35 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
 
   @override
   Widget build(BuildContext context) {
-    final moneyBox = ref.watch(moneyBoxProvider).value;
+    final moneyBoxAsync = ref.watch(moneyBoxProvider);
     final colorApp = ref.watch(color_theme);
 
     return SafeArea(
-      child: Column(
-        children: [
-          MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,marging: 16,),
-      
-          if(moneyBox != null && moneyBox.isNotEmpty) ...[
-            const SizedBox(height: 50),
-            Center(
-              child: SizedBox(
-                width: 300,
-                height: 300,
-                child: LiquidCircularProgressIndicator(
-                  value: (moneyBox.isNotEmpty) ? (moneyBox[0].amountInBox ?? 0) / moneyBox[0].targetAmount : 0,
-                  valueColor: AlwaysStoppedAnimation(
-                    const Color.fromARGB(255, 51, 51, 51),
-                  ),
-                
-                  backgroundColor: Color(0xFF242424),
-                
-                  borderColor: const Color(0xFF242424),
-                  borderWidth: 2,
-                
-                  direction: Axis.vertical,
-                
-                  center: Column(
-                    mainAxisAlignment: .center,
-                    children: [
-                      Text(
-                        "${moneyBox.isNotEmpty ? NumberFormat("#,###").format(moneyBox[0].amountInBox) : '0'} Ar",
-                        style: TextStyle(color: Colors.white, fontFamily: 'Jersey15', fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Goal: ${moneyBox.isNotEmpty ? moneyBox[0].targetAmount.toString() : '0'} Ar",
-                        style: TextStyle(color: Color(0xFF19C285), fontFamily: 'Jersey15', fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: .center,
-              children: [
+      child: 
+      moneyBoxAsync.when(
+        skipLoadingOnRefresh: true,
         
-                GestureDetector(
-                  onTap: () => showDepositForm(ref.watch(color_theme), 'INCOME'),
-                  child: Container(
-                    width: 100,
-                    padding: .symmetric(horizontal: 10, vertical: 15),
-                    height: 90,
-                        
-                    decoration: BoxDecoration(
-                      color: Color(0xFF242424),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                        
-                    child: Column(
-                      mainAxisAlignment: .spaceAround,
-                      children: [
-                        Icon(HugeIcons.strokeRoundedMoneyAdd01, color: Color(0xFF8B12B1), size: 30),
-                        Text(
-                          "Add",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            fontFamily: 'Jersey15',
-                          )
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ],
-          if(moneyBox == null || moneyBox.isEmpty) ...[
-            const SizedBox(height: 100),
-            EmptyState(title: "Boite a argent introuvable", subtitle: "Vous pouvez commencer par en cree un maintenant!", actionLabel: "Cree un!",
-            onAction: () => showDynamicModal(
-                context, 
-                title: "Créer une boîte d'épargne", 
+        loading: () => const Center(
+          child: GestyLoadingWidget(),
+        ),
+
+        error: (e, _) => const Center(
+          child: Text('Erreur de chargement'),
+        ),
+
+        data: (moneyBox) {
+          if (moneyBox.isEmpty) {
+            return EmptyState(
+              title: "Boite a argent introuvable",
+              subtitle: "Vous pouvez commencer par en créer un maintenant!",
+              actionLabel: "Créer un!",
+              onAction: () => showDynamicModal(
+                context,
+                title: "Créer une boîte d'épargne",
                 subtitle: "Remplis ce formulaire pour en créer une",
                 children: [
-                  CreateMoneyBoxForm(colorApp: colorApp, 
+                  CreateMoneyBoxForm(
+                    colorApp: colorApp,
                     onSubmit: (name, amount) async {
                       final result = await createMoneyBox(
                         baseUrl: ref.read(baseUrl),
@@ -239,12 +173,88 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
                       }
                     },
                   )
-               
-                ]
+                ],
               ),
-            )
-          ]
-        ],
+            );
+          }
+
+          // Données disponibles
+          return Column(
+            children: [
+
+              const SizedBox(height: 150),
+              Center(
+                child: SizedBox(
+                  width: 300,
+                  height: 300,
+                  child: LiquidCircularProgressIndicator(
+                    value: (moneyBox.isNotEmpty) ? (moneyBox[0].amountInBox ?? 0) / moneyBox[0].targetAmount : 0,
+                    valueColor: AlwaysStoppedAnimation(
+                      const Color.fromARGB(255, 51, 51, 51),
+                    ),
+                  
+                    backgroundColor: Color(0xFF242424),
+                  
+                    borderColor: const Color(0xFF242424),
+                    borderWidth: 2,
+                  
+                    direction: Axis.vertical,
+                  
+                    center: Column(
+                      mainAxisAlignment: .center,
+                      children: [
+                        Text(
+                          "${moneyBox.isNotEmpty ? NumberFormat("#,###").format(moneyBox[0].amountInBox) : '0'} Ar",
+                          style: TextStyle(color: Colors.white, fontFamily: 'Jersey15', fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Goal: ${moneyBox.isNotEmpty ? moneyBox[0].targetAmount.toString() : '0'} Ar",
+                          style: TextStyle(color: Color(0xFF19C285), fontFamily: 'Jersey15', fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: .center,
+                children: [
+          
+                  GestureDetector(
+                    onTap: () => showDepositForm(ref.watch(color_theme), 'INCOME'),
+                    child: Container(
+                      width: 100,
+                      padding: .symmetric(horizontal: 10, vertical: 15),
+                      height: 90,
+                          
+                      decoration: BoxDecoration(
+                        color: Color(0xFF242424),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                          
+                      child: Column(
+                        mainAxisAlignment: .spaceAround,
+                        children: [
+                          Icon(HugeIcons.strokeRoundedMoneyAdd01, color: Color(0xFF8B12B1), size: 30),
+                          Text(
+                            "Add",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              fontFamily: 'Jersey15',
+                            )
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        },
       ),
     );
   }
