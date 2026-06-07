@@ -55,24 +55,68 @@ Future<Map<String, dynamic>> login(String baseUrl, String email, String pass) as
 }
 // WALLET
 Future<Map<String, dynamic>> getWallet(String baseUrl, String typeWallet, String token) async {
-  final url = Uri.parse('$baseUrl/wallets/one/$typeWallet');
+  print(token);
+  try {
+    final url = Uri.parse('$baseUrl/wallets/one/$typeWallet');
+    final request = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      }
+    );
 
-  final request = await http.get(
-    url,
-    headers: {
-      'Authorization': 'Bearer $token',
+    // Body vide
+    if (request.body.isEmpty) return {};
+
+    final data = jsonDecode(request.body);
+
+    // data peut être null ou pas un Map
+    if (data == null || data is! Map<String, dynamic>) return {};
+
+    if (request.statusCode == 200 || request.statusCode == 201) {
+      print("Get wallet amount Success");
+      return data;
+    } else {
+      print("Wallet Error: $data");
+      return data;
     }
-  );
 
-  final data = jsonDecode(request.body);
-  if(request.statusCode == 200 || request.statusCode == 201){
-    print("Get wallet amount Success");
-    return data;
-  }else{
-    print("Login Error , data: $data");
-    return data;
+  } catch (e) {
+    print("getWallet Exception: $e");
+    return {};
   }
 }
+
+Future<void> creatWallet(String baseUrl, String typeWallet, String nameWallet) async {
+  try {
+    final url = Uri.parse('$baseUrl/wallets/create');
+    final request = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "name": nameWallet,
+        "type": typeWallet,
+      })
+    );
+
+    final data = jsonDecode(request.body);
+
+    if (request.statusCode == 200 || request.statusCode == 201) {
+      print("Create wallet Success");
+      // return data;
+    } else {
+      print("Wallet Error: $data");
+      // return data;
+    }
+
+  } catch (e) {
+    print("createWallet Exception: $e");
+    // return {};
+  }
+}
+
 // TRANSACTIONS
 Future<void> depositServiceTransaction({
   required int idWallet,
@@ -164,6 +208,45 @@ Future<List<CategoryModel>> getAllCategory({
   }
 }
 // MONEY BOX
+
+Future<Map<String, dynamic>> createMoneyBox({
+  required String baseUrl,
+  required String token,
+  required String name,
+  required double targetAmount,
+}) async {
+  try {
+    final url = Uri.parse('$baseUrl/money-box/create');
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'name': name,
+        'targetAmount': targetAmount,
+        'amountInBox': 0,
+      }),
+    );
+
+    if (response.body.isEmpty) return {};
+    final data = jsonDecode(response.body);
+    if (data == null || data is! Map<String, dynamic>) return {};
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('MoneyBox created!');
+      return data;
+    } else {
+      print('MoneyBox error: $data');
+      return data;
+    }
+  } catch (e) {
+    print('createMoneyBox exception: $e');
+    return {};
+  }
+}
+
 Future<List<MoneyBoxModel>> getMoneyBox(String baseUrl, String token) async {
   final url = Uri.parse('$baseUrl/money-box/all');
 

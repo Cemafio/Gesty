@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gesty_app/page/money_box/moneyBoxForm.dart';
 import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/providers/categories_provider.dart';
 import 'package:gesty_app/providers/money_box_provider.dart';
@@ -7,10 +8,13 @@ import 'package:gesty_app/providers/transaction_provider.dart';
 import 'package:gesty_app/service/service.dart';
 import 'package:gesty_app/utils/extensionString.dart';
 import 'package:gesty_app/widget/categorie.dart';
+import 'package:gesty_app/widget/dynamic_modal.dart';
+import 'package:gesty_app/widget/emptyState.dart';
 import 'package:gesty_app/widget/icon-txt-field.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 import 'package:gesty_app/widget/simpel_btn.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
 
 class MoneyBox extends ConsumerStatefulWidget {
@@ -24,14 +28,22 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
   bool _isLoaded = false;
   TextEditingController amountController = TextEditingController();
   final  List<double> suggeste_amount = [500, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000];
+  bool isNotEmpty = false;
 
-  void changeValueTextController(String value){
+  void changeValueAmountController(String value){
     print('Amount in function: ${value}');
 
     setState(() {
       amountController.text = value;
     });
   }
+  // void changeValueTextController(String value){
+  //   print('name in function: ${value}');
+
+  //   setState(() {
+  //     nameController.text = value;
+  //   });
+  // }
 
   void _update() async {
     setState(() {
@@ -64,7 +76,6 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
   }
 
   void showDepositForm(List<dynamic> _color, String type) {
-
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -76,7 +87,6 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
             return Container(
               height: MediaQuery.of(context).size.height * 0.2,
               width: MediaQuery.of(context).size.width,
-            
               padding: .all(10),
               margin: .only(bottom: MediaQuery.of(context).viewInsets.bottom),
                           
@@ -105,7 +115,7 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
                             print('Selected index: ${selectedIndex}');
                             setModalState(() {
                               selectedIndex = index;
-                              changeValueTextController(suggeste_amount[index].toString());
+                              changeValueAmountController(suggeste_amount[index].toString());
                             });
                           },
                         );
@@ -113,7 +123,7 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
                     ),
                   ),  
                   const SizedBox(height: 5,),  
-                  TxtFielWIcon(label: 'How much ?',controllerText: amountController, actionSaved: () => changeValueTextController),
+                  TxtFielWIcon(label: 'How much ?',type: 'number',controllerText: amountController, actionSaved: () => changeValueAmountController),
                   const SizedBox(height: 5,),  
                   SimpelBtn(action:() => _update(),t: type=='INCOME'?'deposit':'withdraw',c: (amountController.text.isNotEmpty)? _color.first:_color[1],bold: true,isLoaded: _isLoaded,)
                 ],
@@ -126,84 +136,127 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    amountController.addListener(() => setState(() {}));
+    // nameController.addListener(() => setState(() {}));
+  }
+  @override
+  void dispose() {
+    amountController.dispose();
+    // nameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final moneyBox = ref.watch(moneyBoxProvider).value;
+    final colorApp = ref.watch(color_theme);
 
     return SafeArea(
       child: Column(
         children: [
           MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,marging: 16,),
       
-          const SizedBox(height: 50),
-          Center(
-            child: SizedBox(
-              width: 300,
-              height: 300,
-              child: LiquidCircularProgressIndicator(
-                value: (moneyBox != null && moneyBox.isNotEmpty) ? (moneyBox[0].amountInBox ?? 0) / moneyBox[0].targetAmount : 0,
-                valueColor: AlwaysStoppedAnimation(
-                  const Color.fromARGB(255, 51, 51, 51),
-                ),
-              
-                backgroundColor: Color(0xFF242424),
-              
-                borderColor: const Color(0xFF242424),
-                borderWidth: 2,
-              
-                direction: Axis.vertical,
-              
-                center: Column(
-                  mainAxisAlignment: .center,
-                  children: [
-                    Text(
-                      "${moneyBox != null && moneyBox.isNotEmpty ? moneyBox[0].amountInBox.toString() : '0'} Ar",
-                      style: TextStyle(color: Colors.white, fontFamily: 'Jersey15', fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Goal: ${moneyBox != null && moneyBox.isNotEmpty ? moneyBox[0].targetAmount.toString() : '0'} Ar",
-                      style: TextStyle(color: Color(0xFF19C285), fontFamily: 'Jersey15', fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: .center,
-            children: [
-      
-              GestureDetector(
-                onTap: () => showDepositForm(ref.watch(color_theme), 'INCOME'),
-                child: Container(
-                  width: 100,
-                  padding: .symmetric(horizontal: 10, vertical: 15),
-                  height: 90,
-                      
-                  decoration: BoxDecoration(
-                    color: Color(0xFF242424),
-                    borderRadius: BorderRadius.circular(15),
+          if(moneyBox != null && moneyBox.isNotEmpty) ...[
+            const SizedBox(height: 50),
+            Center(
+              child: SizedBox(
+                width: 300,
+                height: 300,
+                child: LiquidCircularProgressIndicator(
+                  value: (moneyBox.isNotEmpty) ? (moneyBox[0].amountInBox ?? 0) / moneyBox[0].targetAmount : 0,
+                  valueColor: AlwaysStoppedAnimation(
+                    const Color.fromARGB(255, 51, 51, 51),
                   ),
-                      
-                  child: Column(
-                    mainAxisAlignment: .spaceAround,
+                
+                  backgroundColor: Color(0xFF242424),
+                
+                  borderColor: const Color(0xFF242424),
+                  borderWidth: 2,
+                
+                  direction: Axis.vertical,
+                
+                  center: Column(
+                    mainAxisAlignment: .center,
                     children: [
-                      Icon(HugeIcons.strokeRoundedMoneyAdd01, color: Color(0xFF8B12B1), size: 30),
                       Text(
-                        "Add",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          fontFamily: 'Jersey15',
-                        )
+                        "${moneyBox.isNotEmpty ? NumberFormat("#,###").format(moneyBox[0].amountInBox) : '0'} Ar",
+                        style: TextStyle(color: Colors.white, fontFamily: 'Jersey15', fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Goal: ${moneyBox.isNotEmpty ? moneyBox[0].targetAmount.toString() : '0'} Ar",
+                        style: TextStyle(color: Color(0xFF19C285), fontFamily: 'Jersey15', fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 ),
               ),
-            ],
-          )
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: .center,
+              children: [
+        
+                GestureDetector(
+                  onTap: () => showDepositForm(ref.watch(color_theme), 'INCOME'),
+                  child: Container(
+                    width: 100,
+                    padding: .symmetric(horizontal: 10, vertical: 15),
+                    height: 90,
+                        
+                    decoration: BoxDecoration(
+                      color: Color(0xFF242424),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                        
+                    child: Column(
+                      mainAxisAlignment: .spaceAround,
+                      children: [
+                        Icon(HugeIcons.strokeRoundedMoneyAdd01, color: Color(0xFF8B12B1), size: 30),
+                        Text(
+                          "Add",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            fontFamily: 'Jersey15',
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+          if(moneyBox == null || moneyBox.isEmpty) ...[
+            const SizedBox(height: 100),
+            EmptyState(title: "Boite a argent introuvable", subtitle: "Vous pouvez commencer par en cree un maintenant!", actionLabel: "Cree un!",
+            onAction: () => showDynamicModal(
+                context, 
+                title: "Créer une boîte d'épargne", 
+                subtitle: "Remplis ce formulaire pour en créer une",
+                children: [
+                  CreateMoneyBoxForm(colorApp: colorApp, 
+                    onSubmit: (name, amount) async {
+                      final result = await createMoneyBox(
+                        baseUrl: ref.read(baseUrl),
+                        token: ref.read(accessTokenProvider),
+                        name: name,
+                        targetAmount: amount,
+                      );
+                      if (result.isNotEmpty) {
+                        Navigator.pop(context);
+                        ref.refresh(moneyBoxProvider.future);
+                      }
+                    },
+                  )
+               
+                ]
+              ),
+            )
+          ]
         ],
       ),
     );

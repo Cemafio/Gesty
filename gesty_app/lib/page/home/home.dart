@@ -57,9 +57,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Future<void> depositTransaction(String type)async {
-    final _baseUrl = ref.watch(baseUrl);
-    final token = ref.watch(accessTokenProvider);
-    final double _amount = double.parse(amountController.text);
+    final _baseUrl = ref.read(baseUrl);
+    final token = ref.read(accessTokenProvider);
+    final double _amount = double.tryParse(amountController.text) ?? 0.0;
     final int walletId = await ref.read(walletProvider.future).then((value) => value['id']);
 
     if (_baseUrl != '' && token != '' && _amount > 0 && descriptionController.text != '') {
@@ -88,7 +88,9 @@ class _HomePageState extends ConsumerState<HomePage> {
         Navigator.pop(context,true);
 
       } catch (e) {
-        throw Exception("Transaction error: $e");        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erreur lors de la transaction"))
+        );        
       }finally {
         setState(() {
           _isLoaded = false;
@@ -143,10 +145,10 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
 
               const SizedBox(height: 5,),  
-              TxtFielWIcon(label: 'How much ?',controllerText: amountController, actionSaved: changeCategorySelect),
-              TxtFielWIcon(label: 'Your description',controllerText: descriptionController, actionSaved: changeValueTextController, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
+              TxtFielWIcon(label: 'How much ?',type: 'number',controllerText: amountController, actionSaved: changeCategorySelect),
+              TxtFielWIcon(label: 'Your description',type: 'text',controllerText: descriptionController, actionSaved: changeValueTextController, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
               const SizedBox(height: 5,),  
-              TxtFielWIcon(label: 'His category',controllerText: categoryController, actionSaved: changeValueTextController, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
+              TxtFielWIcon(label: 'His category',type: 'text',controllerText: categoryController, actionSaved: changeValueTextController, icon: Icon(HugeIcons.strokeRoundedText, color: Colors.white,)),
               const SizedBox(height: 5,),  
               SimpelBtn(action: ()=> depositTransaction(type),t: type=='INCOME'?'deposit':'withdraw',c: (amountController.text != ''&& descriptionController.text != ''&& categoryController.text != '')? _color.first:_color[1],bold: true,isLoaded: _isLoaded,)
             ],
@@ -189,7 +191,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   const SizedBox(height: 5),
                   walletAsync.when(
                     data: (wallet) => Text(
-                      "${wallet['balance']} Ar",
+                      "${NumberFormat('#,###', 'fr_FR').format(wallet['balance'])} Ar",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 50,
@@ -237,39 +239,44 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 40),
-                  SizedBox(
-                    // height: 25,
 
-                    child: futureCategory.when(
-                      data: (c) {
-                        // print('Categories loaded: $c');
-                        return ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: c.length,
-                          itemBuilder: (context, index) {
-                            final category = c[index];
+                  if(futureCategory.hasValue)...[
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      height: 25,
 
-                            return CategorieSection(
-                              title: category.name,
-                              selected: category.name == selectedCategoryName,
-                              selectedAction: () {
-                                changeCategorySelect(category.name, category.categoryId);
-                              },
-                            );
-                          },
-                        );
-                      },
+                      child: futureCategory.when(
+                        skipLoadingOnRefresh: true,
+                        data: (c) {
+                          // print('Categories loaded: $c');
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: c.length,
+                            itemBuilder: (context, index) {
+                              final category = c[index];
 
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                              return CategorieSection(
+                                title: category.name,
+                                selected: category.name == selectedCategoryName,
+                                selectedAction: () {
+                                  changeCategorySelect(category.name, category.categoryId);
+                                },
+                              );
+                            },
+                          );
+                        },
 
-                      error: (error, stack) => Center(
-                        child: EmptyState(title: "Pas encore de transactions.", subtitle: "Ajoutez votre première dépense des maintenant.", onAction: () => showDepositForm(colorApp, 'INCOME'),),
-                      ),
-                    )
-                  ),
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+
+                        error: (error, stack) => Center(
+                          child: Text(''),
+                        ),
+                      )
+                    ),
+                  ],
+                  
 
                   if(transactionForCategery.isNotEmpty)
                     Expanded(
@@ -306,6 +313,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                         },
 
                         data: (transactions) {
+                          if(transactions.isEmpty) {
+                            return EmptyState(title: "Pas encore de transactions.", subtitle: "Ajoutez votre première dépense des maintenant.", onAction: () => showDepositForm(colorApp, 'INCOME'),);
+                          }
+
                           return ListView.builder(
                             itemCount: transactions.length,
 

@@ -6,7 +6,8 @@ class TxtFielWIcon extends StatefulWidget {
   final Function actionSaved;
   final controllerText;
   final Icon? icon;
-  const TxtFielWIcon({super.key, required this.label, required this.actionSaved,required this.controllerText, this.icon});
+  final String type;
+  const TxtFielWIcon({super.key, required this.type ,required this.label, required this.actionSaved,required this.controllerText, this.icon});
 
   @override
   State<TxtFielWIcon> createState() => _TxtFielWIconState();
@@ -26,7 +27,7 @@ class _TxtFielWIconState extends State<TxtFielWIcon> {
               controller: widget.controllerText,
               onChanged: (value) => widget.actionSaved(value),
               
-              keyboardType:(widget.label == 'How much ?')
+              keyboardType:(widget.type == 'number')
                 ?TextInputType.number
                 :TextInputType.text,
               
@@ -40,9 +41,6 @@ class _TxtFielWIconState extends State<TxtFielWIcon> {
             
                 return null;
               },
-              // onSaved: (newValue) => newValue != '' 
-              //   ? widget.actionSaved(newValue, widget.label)
-              //   : null,
             
               decoration: InputDecoration(
                 prefixIcon: widget.icon ?? Icon(HugeIcons.strokeRoundedCoins01, color: Colors.white,),

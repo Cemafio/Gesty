@@ -46,7 +46,7 @@ class _LoginState extends ConsumerState<Login> {
           AppNavigator.navigate(context, BaseApp());
         }
         if(response['mess'] != null){
-          print('Error message : ${response['mess']}');
+          // print('Error message : ${response['mess']}');
           setState(() {
             _errorMess = response['mess'];
           });
@@ -81,7 +81,6 @@ class _LoginState extends ConsumerState<Login> {
   }
 
   void changeObscuredText(){
-    print('click');
     setState(() {
       _isPassObscured = !_isPassObscured;
     });

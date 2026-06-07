@@ -40,7 +40,6 @@ class _SignUpState extends ConsumerState<SignUp> {
           setState(() {
             _errorMess = '';
           });
-          print('Error message = $_errorMess');
           AppNavigator.navigate(context, Login());
         }
 

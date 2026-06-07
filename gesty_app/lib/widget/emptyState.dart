@@ -24,8 +24,6 @@ class EmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: 60),
-
           Lottie.asset(
             'assets/animations/${(lottiName != null) ? lottiName : 'paper_plane'}.json',
             width: 150,
