@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gesty_app/providers/app_provider.dart';
 import 'package:lottie/lottie.dart';
 
 class EmptyState extends StatelessWidget {
   final String title;
+  final String? lottiName;
   final String subtitle;
   final VoidCallback? onAction;
   final String? actionLabel;
@@ -10,6 +12,7 @@ class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
     required this.title,
+    this.lottiName,
     required this.subtitle,
     this.onAction,
     this.actionLabel,
@@ -21,17 +24,20 @@ class EmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(height: 60),
+
           Lottie.asset(
-            'assets/animations/empty.json',
-            width: 200,
-            height: 200,
+            'assets/animations/${(lottiName != null) ? lottiName : 'paper_plane'}.json',
+            width: 150,
+            height:150,
             repeat: true,
           ),
-          const SizedBox(height: 16),
+          // const SizedBox(height: 10),
           Text(
             title,
             style: const TextStyle(
               fontSize: 18,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -45,7 +51,8 @@ class EmptyState extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: onAction,
-              child: Text(actionLabel ?? 'Commencer'),
+
+              child: Text(actionLabel ?? "C'est parti !"),
             ),
           ]
         ],

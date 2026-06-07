@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gesty_app/providers/app_provider.dart';
 import 'package:gesty_app/providers/categories_provider.dart';
 import 'package:gesty_app/providers/transaction_provider.dart';
+import 'package:gesty_app/utils/extensionString.dart';
 import 'package:gesty_app/widget/aleatoireColors.dart';
+import 'package:gesty_app/widget/emptyState.dart';
 import 'package:gesty_app/widget/legendItem.dart';
 import 'package:gesty_app/widget/mini_profil.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -61,11 +63,7 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
     return SafeArea(
       child: Column(
         children: [
-          MiniProfil(
-            name: "Cesar",
-            email: "cesar@gmail.com",
-            marging: 16,
-          ),
+          MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,marging: 16,),
     
           const SizedBox(height: 10),
           Row(
@@ -143,40 +141,47 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
             ],
           ),
           
-          const SizedBox(height: 50),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: 250,
-      
-            child: PieChart(
-              PieChartData(
-                sections: sections,
+          if(sections.isEmpty) ...[
+            const SizedBox(height: 60),
+            EmptyState(title: 'Pas de depense, pas de stat ...', subtitle: "Ajoutez votre première dépense dès maintenant.",lottiName: 'lottie_2', actionLabel: "Faire une transaction", onAction: (){},)
+          ],
+          
+          if(sections.isNotEmpty) ...[
+            const SizedBox(height: 50),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: 250,
+        
+              child: PieChart(
+                PieChartData(
+                  sections: sections,
+                ),
               ),
             ),
-          ),
-      
-          const SizedBox(height: 60),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            // height: 200,
-            padding: .all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10)
+        
+            const SizedBox(height: 60),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              // height: 200,
+              padding: .all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10)
+              ),
+        
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                alignment: .center,
+        
+                children: categoriesAmount.entries.map((entry) {
+                  return LegendItem(
+                    title: entry.key,
+                    color: getCategoryColor(entry.key),
+                  );
+                }).toList(),
+              )
             ),
-      
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              alignment: .center,
-      
-              children: categoriesAmount.entries.map((entry) {
-                return LegendItem(
-                  title: entry.key,
-                  color: getCategoryColor(entry.key),
-                );
-              }).toList(),
-            )
-          ),
+          ]
         ],
       ),
     );

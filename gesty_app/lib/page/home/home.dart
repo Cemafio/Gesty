@@ -266,7 +266,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
 
                       error: (error, stack) => Center(
-                        child: EmptyState(title: "No transaction", subtitle: "Deposit money to start"),
+                        child: EmptyState(title: "Pas encore de transactions.", subtitle: "Ajoutez votre première dépense des maintenant.", onAction: () => showDepositForm(colorApp, 'INCOME'),),
                       ),
                     )
                   ),
