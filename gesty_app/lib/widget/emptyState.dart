@@ -22,7 +22,7 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Lottie.asset(
             'assets/animations/${(lottiName != null) ? lottiName : 'paper_plane'}.json',

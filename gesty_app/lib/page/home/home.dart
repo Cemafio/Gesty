@@ -191,26 +191,50 @@ class _HomePageState extends ConsumerState<HomePage> {
                   MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,),
               
                   const SizedBox(height: 5),
-                  walletAsync.when(
-                    data: (wallet) => Text(
-                      "${NumberFormat('#,###', 'fr_FR').format(wallet['balance'])} Ar",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 50,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: 'Jersey15',
-                      )
-                    ),
-                    loading: () => CircularProgressIndicator(),
-                    error: (e, _) => Text(
-                      "0 Ar",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 50,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: 'Jersey15',
-                      )
-                    ),
+                  // Le montant
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(width: 60,),
+                      walletAsync.when(
+                        skipLoadingOnRefresh: true,
+                        data: (wallet) {
+                          final isVisible = ref.watch(isBalanceVisibleProvider);
+                          return Text(
+                            isVisible 
+                              ? "${wallet['balance']} Ar" 
+                              : "${"•" * wallet['balance'].toString().length} Ar",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 50,
+                              fontWeight: FontWeight.normal,
+                              fontFamily: 'Jersey15',
+                            ),
+                          );
+                        },
+                        loading: () => SkeletonBox(width: 180, height: 50),
+                        error: (e, _) => Text("0 Ar", style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 50,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Jersey15',
+                        ),),
+                      ),
+                      const SizedBox(width: 8),
+                      // Bouton œil
+                      IconButton(
+                        onPressed: () => ref
+                            .read(isBalanceVisibleProvider.notifier)
+                            .state = !ref.read(isBalanceVisibleProvider),
+                        icon: Icon(
+                          ref.watch(isBalanceVisibleProvider)
+                              ? HugeIcons.strokeRoundedEye
+                              : HugeIcons.strokeRoundedViewOff,
+                          color: Colors.white54,
+                          size: 20,
+                        ),
+                      ),
+                    ],
                   ),
               
                   const SizedBox(height: 15),
@@ -272,7 +296,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           children: List.generate(4, (index) => 
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
-                              child: SkeletonBox(width: 50, height: 20, radius: 6),
+                              child: SkeletonBox(width: 50, height: 20),
                             )
                           ),
                         ),
@@ -306,10 +330,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                   if(transactionForCategery.isEmpty)
                     Expanded(
                       child: transactions.when(
-                        loading: () => ListView.builder(
-                          itemCount: 5, // 5 skeletons
-                          itemBuilder: (context, index) => const SkeletonTransaction(),
+                        loading: () => Center(
+                          child:  Lottie.asset(
+                            'assets/animations/loading_hand.json',
+                            width: 150,
+                            height:150,
+                            repeat: true,
+                          ),
                         ),
+                        // ListView.builder(
+                        //   itemCount: 5, // 5 skeletons
+                        //   itemBuilder: (context, index) => const SkeletonTransaction(),
+                        // ),
 
 
                         error: (err, stack){
@@ -323,7 +355,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                         data: (transactions) {
                           if(transactions.isEmpty) {
-                            return EmptyState(title: "Pas encore de transactions.", subtitle: "Ajoutez votre première dépense des maintenant.", onAction: () => showDepositForm(colorApp, 'INCOME'),);
+                            return EmptyState(title: "Aucun transactions.", subtitle: "Ajoutez votre première dépense des maintenant.", onAction: () => showDepositForm(colorApp, 'INCOME'),);
                           }
 
                           return ListView.builder(

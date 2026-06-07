@@ -65,88 +65,88 @@ class _MoneyStatePageState extends ConsumerState<MoneyStatePage> {
         children: [
           MiniProfil(name: ref.watch(user_data)!.name.uperFirstChart()  ,email: ref.watch(user_data)!.email,marging: 16,),
     
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: .center,
-            children: [
-
-              Container(
-                width: 160,
-                padding: .symmetric(horizontal: 12, vertical: 12),
-                // height: 90,
-
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-
-                child: Column(
-                  mainAxisAlignment: .spaceAround,
-                  children: [
-                    Text(
-                      "Expenses",
-                      style: TextStyle(
-                        color: colorApp[4],
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: 'Jersey15',
-                      )
-                    ),
-                    Text(
-                      "-${sommeExpenses.toStringAsFixed(2)} ar",
-                      style: TextStyle(
-                        color: colorApp.last,
-                        fontSize: 25,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: 'Jersey15',
-                      )
-                    ),
-
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              Container(
-                width: 160,
-                padding: .symmetric(horizontal: 12, vertical: 12),
-                // height: 90,
-
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-
-                child: Column(
-                  mainAxisAlignment: .spaceAround,
-                  children: [
-                    Text(
-                      "Incomes",
-                      style: TextStyle(
-                        color: colorApp[4],
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: 'Jersey15',
-                      )
-                    ),
-                    Text(
-                      "+${sommeIncomes.toStringAsFixed(2)} ar",
-                      style: TextStyle(
-                        color: colorApp[3],
-                        fontSize: 22,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: 'Jersey15',
-                      )
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          
           if(sections.isEmpty) ...[
             const SizedBox(height: 60),
             EmptyState(title: 'Pas de depense, pas de stat ...', subtitle: "Ajoutez votre première dépense dès maintenant.",lottiName: 'lottie_2', actionLabel: "Faire une transaction", onAction: (){},)
           ],
           
           if(sections.isNotEmpty) ...[
+
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: .center,
+              children: [
+
+                Container(
+                  width: 160,
+                  padding: .symmetric(horizontal: 12, vertical: 12),
+                  // height: 90,
+
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+
+                  child: Column(
+                    mainAxisAlignment: .spaceAround,
+                    children: [
+                      Text(
+                        "Expenses",
+                        style: TextStyle(
+                          color: colorApp[4],
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Jersey15',
+                        )
+                      ),
+                      Text(
+                        "-${sommeExpenses.toStringAsFixed(2)} ar",
+                        style: TextStyle(
+                          color: colorApp.last,
+                          fontSize: 25,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Jersey15',
+                        )
+                      ),
+
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Container(
+                  width: 160,
+                  padding: .symmetric(horizontal: 12, vertical: 12),
+                  // height: 90,
+
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+
+                  child: Column(
+                    mainAxisAlignment: .spaceAround,
+                    children: [
+                      Text(
+                        "Incomes",
+                        style: TextStyle(
+                          color: colorApp[4],
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Jersey15',
+                        )
+                      ),
+                      Text(
+                        "+${sommeIncomes.toStringAsFixed(2)} ar",
+                        style: TextStyle(
+                          color: colorApp[3],
+                          fontSize: 22,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Jersey15',
+                        )
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 50),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,

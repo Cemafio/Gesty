@@ -15,5 +15,5 @@ final color_theme = StateProvider<List<dynamic>>((ref){
 
 final baseUrl = StateProvider<String>((ref) => 'https://gesty-api.onrender.com');
 final accessTokenProvider = StateProvider<String>((ref) => '');
-
+final isBalanceVisibleProvider = StateProvider<bool>((ref) => true);
 final user_data = StateProvider<UserModel?>((ref) => null);

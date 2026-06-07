@@ -136,19 +136,6 @@ class _MoneyBoxState extends ConsumerState<MoneyBox> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    amountController.addListener(() => setState(() {}));
-    // nameController.addListener(() => setState(() {}));
-  }
-  @override
-  void dispose() {
-    amountController.dispose();
-    // nameController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final moneyBox = ref.watch(moneyBoxProvider).value;
     final colorApp = ref.watch(color_theme);

@@ -10,7 +10,7 @@ class SkeletonBox extends StatelessWidget {
     super.key,
     required this.width,
     required this.height,
-    this.radius = 8,
+    this.radius = 6,
   });
 
   @override
